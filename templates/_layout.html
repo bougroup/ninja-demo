@@ -6,41 +6,66 @@
 {{end}}
 
 {{define "nav"}}
-<header class="site-header">
-  <div class="site-header-inner">
-    <a class="brand" href="/">
+<aside class="app-sidebar">
+  <div class="sidebar-brand">
+    <a href="/" class="brand-link">
       <img class="logo-img" src="/assets/img/ninja_logo_white.png" alt="Ninja">
       <span class="brand-badge">Fintech Suite</span>
     </a>
-    <nav class="nav-groups">
-      <div class="nav-group">
-        <span class="nav-group-label">Verticals</span>
-        <a class="nav-link{{if hasPrefix .Path "/app/vendor"}} active{{end}}" href="/app/vendor/apply">🏢 MarketPay</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/gaming"}} active{{end}}" href="/app/gaming">🎰 ApexBet</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/fintech"}} active{{end}}" href="/app/fintech">💳 ApexPay</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/international"}} active{{end}}" href="/app/international/console">🌍 ApexGlobal</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/agents"}} active{{end}}" href="/app/agents">🛰️ ApexAgent</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/employees"}} active{{end}}" href="/app/employees">🪪 WorkForce</a>
-      </div>
-      <div class="nav-group">
-        <span class="nav-group-label">Ops</span>
-        <a class="nav-link{{if and (hasPrefix .Path "/app/admin") (not (hasPrefix .Path "/app/admin/identity-check")) (not (hasPrefix .Path "/app/admin/webhooks"))}} active{{end}}" href="/app/admin">Dashboard</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/admin/identity-check"}} active{{end}}" href="/app/admin/identity-check">Spot-Check</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/admin/webhooks"}} active{{end}}" href="/app/admin/webhooks">Webhooks</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/sandbox-data"}} active{{end}}" href="/app/sandbox-data">🧪 Fixtures</a>
-        <a class="nav-link{{if hasPrefix .Path "/app/guide"}} active{{end}}" href="/app/guide">📖 Guide</a>
-      </div>
-    </nav>
-    <div class="header-tools">
-      <form method="POST" action="/app/toggle-mock-mode" style="display:inline; margin:0;">
-        <input type="hidden" name="return_to" value="{{.Path}}">
-        <button type="submit" class="mode-toggle-btn {{if .IsMockMode}}mock{{else}}live{{end}}" title="Toggle between live sandbox and high-fidelity offline simulator">
-          {{if .IsMockMode}}⚡ Offline Simulator{{else}}🟢 Live Sandbox API{{end}}
-        </button>
-      </form>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Solutions</div>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/gaming"}} active{{end}}" href="/app/gaming">
+        <span class="sidebar-icon">🎰</span> Sportsbook
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/fintech"}} active{{end}}" href="/app/fintech">
+        <span class="sidebar-icon">💳</span> Neobank Tiers
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/vendor"}} active{{end}}" href="/app/vendor/apply">
+        <span class="sidebar-icon">🏢</span> B2B Escrow
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/agents"}} active{{end}}" href="/app/agents">
+        <span class="sidebar-icon">🛰️</span> POS Agency Fleet
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/employees"}} active{{end}}" href="/app/employees">
+        <span class="sidebar-icon">🪪</span> HR &amp; Payroll
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/international"}} active{{end}}" href="/app/international/console">
+        <span class="sidebar-icon">🌍</span> FX Treasury Desk
+      </a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Developer &amp; Ops</div>
+      <a class="sidebar-link{{if and (hasPrefix .Path "/app/admin") (not (hasPrefix .Path "/app/admin/identity-check")) (not (hasPrefix .Path "/app/admin/webhooks"))}} active{{end}}" href="/app/admin">
+        <span class="sidebar-icon">📋</span> Admin Cockpit
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/admin/identity-check"}} active{{end}}" href="/app/admin/identity-check">
+        <span class="sidebar-icon">🔍</span> Identity Spot-Check
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/admin/webhooks"}} active{{end}}" href="/app/admin/webhooks">
+        <span class="sidebar-icon">🔔</span> Webhook Inspector
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/sandbox-data"}} active{{end}}" href="/app/sandbox-data">
+        <span class="sidebar-icon">🧪</span> Test Fixtures
+      </a>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/guide"}} active{{end}}" href="/app/guide">
+        <span class="sidebar-icon">📖</span> System Guide
+      </a>
     </div>
   </div>
-</header>
+
+  <div class="sidebar-footer">
+    <form method="POST" action="/app/toggle-mock-mode" style="margin:0; width:100%;">
+      <input type="hidden" name="return_to" value="{{.Path}}">
+      <button type="submit" class="mode-toggle-btn {{if .IsMockMode}}mock{{else}}live{{end}}" style="width:100%; justify-content:center;">
+        {{if .IsMockMode}}⚡ Offline Simulator{{else}}🟢 Live Sandbox API{{end}}
+      </button>
+    </form>
+  </div>
+</aside>
 {{end}}
 
 {{define "badge"}}{{if .}}<span class="badge {{badgeClass .}}">{{.}}</span>{{else}}<span class="badge pending">pending</span>{{end}}{{end}}

@@ -23,7 +23,7 @@ one of them, so nothing needs to be typed to try it.
 ## The six scenarios
 
 | Scenario | Solution page | Entry point | What it demonstrates |
-|---|---|---|---|
+|---|---|---|---  |
 | **Vendor Onboarding** | [ninja.ng/solutions/vendor-onboarding](https://ninja.ng/solutions/vendor-onboarding/) | `/app/vendor/apply` | Hosted KYB + advanced company lookup + director bulk-identify + AML; a payout wallet that only activates once the business and every director clear. |
 | **Gaming & Betting** | [ninja.ng/for-gaming-betting](https://ninja.ng/for-gaming-betting/) | `/app/gaming/signup` | Age/identity gate at signup (`identify`, verify mode), a re-check before every payout, one identity → one account (unique constraint), self-exclusion enforcement. |
 | **Fintechs** | [ninja.ng/for-fintechs](https://ninja.ng/for-fintechs/) | `/app/fintech/onboard` | Per-field name-matching score/recommendation (not blunt pass/fail) and a re-KYC workflow for flagged accounts. |
