@@ -8,7 +8,7 @@
       <span class="eyebrow">💳 ApexPay Neobank &middot; Customer Ledger</span>
       <h1>Tiered Accounts &amp; Fuzzy Match Confidence</h1>
       <p>
-        Tier 1 basic accounts have a strict ₦50,000/day transfer ceiling. High-scoring identity matches automatically unlock Tier 2 (₦500k/day) and Tier 3 (₦5,000,000/day) limits.
+        Automated Central Bank of Nigeria (CBN) tiered onboarding. High-scoring identity matches automatically unlock Tier 2 (₦500k/day) and Tier 3 (₦5,000,000/day) limits, while phonetic and typo variations are safely routed to Tier 1 without losing customers.
       </p>
     </div>
     <div>
@@ -16,6 +16,7 @@
     </div>
   </div>
 
+  <!-- KPI Grid -->
   <div class="kpi-grid">
     <div class="kpi-card">
       <span class="kpi-label">Active Customer Accounts</span>
@@ -25,104 +26,157 @@
     <div class="kpi-card">
       <span class="kpi-label">Tier 3 VIP Outbound Limit</span>
       <span class="kpi-value">₦5,000,000</span>
-      <span class="kpi-sub">Per Verified Premium Account</span>
+      <span class="kpi-sub">Per Verified Account / Day</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Fuzzy Matching Protection</span>
+      <span class="kpi-label">Fuzzy Matching Engine</span>
       <span class="kpi-value">Active</span>
       <span class="kpi-sub">Levenshtein &amp; Phonetic Analysis</span>
     </div>
   </div>
 
+  <!-- CBN Tier Guide Bar -->
+  <div class="card" style="padding:14px 18px; margin-bottom:24px; background:var(--bg-surface-subtle);">
+    <div style="font-size:.74rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); margin-bottom:10px;">
+      🏛️ Central Bank of Nigeria (CBN) Regulatory Tier Framework
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; font-size:.82rem;">
+      <div style="border-left:2px solid var(--border-strong); padding-left:10px;">
+        <strong style="color:#fff; display:block;">Tier 1: Basic Account</strong>
+        <span style="color:var(--text-secondary);">Daily Limit: <strong>₦50,000</strong> &middot; Max Bal: ₦300k</span>
+        <span style="color:var(--text-tertiary); display:block; font-size:.74rem; margin-top:2px;">Phone + NIN (Score &lt; 75%)</span>
+      </div>
+      <div style="border-left:2px solid var(--accent); padding-left:10px;">
+        <strong style="color:#34d399; display:block;">Tier 2: Standard Account</strong>
+        <span style="color:var(--text-secondary);">Daily Limit: <strong>₦500,000</strong> &middot; Max Bal: ₦1.0M</span>
+        <span style="color:var(--text-tertiary); display:block; font-size:.74rem; margin-top:2px;">BVN + Name Match (Score 75–89%)</span>
+      </div>
+      <div style="border-left:2px solid #38bdf8; padding-left:10px;">
+        <strong style="color:#38bdf8; display:block;">Tier 3: Premium Account</strong>
+        <span style="color:var(--text-secondary);">Daily Limit: <strong>₦5,000,000</strong> &middot; Unlimited Bal</span>
+        <span style="color:var(--text-tertiary); display:block; font-size:.74rem; margin-top:2px;">BVN + NIN + Biometrics (Score &ge; 90%)</span>
+      </div>
+    </div>
+  </div>
+
   {{if .Customers}}
   {{range .Customers}}
-  <div class="card highlight">
-    <div class="card-row" style="border:none; padding-bottom:12px;">
+  <div class="card highlight" style="margin-bottom:24px;">
+    
+    <!-- Customer Header -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; padding-bottom:16px; border-bottom:1px solid var(--border);">
       <div>
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
-          <h2 style="margin:0;">{{.FullName}}</h2>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+          <h2 style="margin:0; font-size:1.35rem;">{{.FullName}}</h2>
           {{template "badge" .Status}}
           <span class="badge {{if eq .Tier 3}}pass{{else if eq .Tier 2}}pass{{else}}pending{{end}}">
             Tier {{.Tier}} Account
           </span>
         </div>
-        <span class="hint">{{.IDType | upper}}: <span class="mono">{{.IDNumber}}</span> &middot; DOB: {{.DateOfBirth}}</span>
+        <div style="font-size:.82rem; color:var(--text-secondary); display:flex; gap:14px; flex-wrap:wrap;">
+          <span>{{.IDType | upper}}: <strong class="mono" style="color:#fff;">{{.IDNumber}}</strong></span>
+          <span>DOB: <strong style="color:#fff;">{{.DateOfBirth}}</strong></span>
+          <span>Verified: <span class="mono" style="color:var(--text-tertiary);">{{.LastCheckedAt}}</span></span>
+        </div>
       </div>
 
       <div style="text-align:right;">
-        <span class="hint" style="display:block;">Daily Outbound Transfer Limit</span>
-        <span style="font-size:1.3rem; font-weight:800; color:#38bdf8; font-family:'JetBrains Mono',monospace;">{{formatKobo .DailyLimitKobo}} / day</span>
+        <span class="kpi-label">Available Balance / Daily Limit</span>
+        <div style="display:flex; align-items:baseline; gap:8px; justify-content:flex-end;">
+          <span style="font-size:1.4rem; font-weight:800; color:#34d399; font-family:'JetBrains Mono',monospace;">{{formatKobo .BalanceKobo}}</span>
+          <span style="font-size:.85rem; color:var(--text-secondary);">({{formatKobo .DailyLimitKobo}}/day limit)</span>
+        </div>
       </div>
     </div>
 
-    <!-- Match Score & Field Decision Engine -->
+    <!-- Match Score Decision Box -->
     <div class="decision-box">
       <div class="decision-header">
-        <span>🔍 Ninja Fuzzy Matching &amp; Confidence Breakdown</span>
-        <span style="font-size:.78rem; color:var(--text-faint);">Score: {{formatScorePercent .Score.Float64}}</span>
+        <span>🔍 Ninja Fuzzy Match Confidence &amp; Scoring Engine</span>
+        <span style="font-size:.78rem; font-weight:700; color:#34d399;">Match Score: {{formatScorePercent .Score.Float64}}</span>
       </div>
+
       <div class="decision-grid">
         <div class="decision-item">
-          <span class="decision-item-title">Confidence Rating</span>
+          <span class="decision-item-title">Match Verdict</span>
           <span class="decision-item-value">
             {{if .Recommendation.Valid}}
-              {{if eq .Recommendation.String "accept"}}<span style="color:#34d399;">✓ High Confidence (Accept)</span>
-              {{else if eq .Recommendation.String "review"}}<span style="color:#fbbf24;">⚠️ Medium Confidence (Review)</span>
-              {{else}}<span style="color:#f87171;">✕ Rejected (Mismatch)</span>{{end}}
+              {{if eq .Recommendation.String "accept"}}<span style="color:#34d399;">✓ High Confidence (Exact Match)</span>
+              {{else if eq .Recommendation.String "review"}}<span style="color:#fbbf24;">⚠️ Medium Confidence (Typo / Review)</span>
+              {{else}}<span style="color:#f87171;">✕ Rejected (Severe Mismatch)</span>{{end}}
             {{else}}
               <span style="color:#34d399;">✓ Verified</span>
             {{end}}
           </span>
         </div>
         <div class="decision-item">
-          <span class="decision-item-title">Current Limit Status</span>
-          <span class="decision-item-value">Tier {{.Tier}} ({{formatKobo .DailyLimitKobo}})</span>
+          <span class="decision-item-title">Assigned CBN Tier</span>
+          <span class="decision-item-value">Tier {{.Tier}} ({{formatKobo .DailyLimitKobo}} Max/Day)</span>
         </div>
         <div class="decision-item">
-          <span class="decision-item-title">Audit Reference</span>
-          <span class="decision-item-value mono" style="font-size:.76rem; color:var(--text-faint);">{{.LastCheckedAt}}</span>
+          <span class="decision-item-title">Phonetic / Name Distance</span>
+          <span class="decision-item-value mono" style="font-size:.82rem; color:var(--text-secondary);">Levenshtein Score: {{formatScorePercent .Score.Float64}}</span>
         </div>
       </div>
 
       {{if .MismatchesRaw.Valid}}
-      <details class="raw" style="margin-top:10px;"><summary>View Field-by-Field Mismatch Payload</summary><pre>{{.MismatchesRaw.String}}</pre></details>
+      <details class="raw" style="margin-top:10px;"><summary style="font-size:.74rem; color:var(--text-tertiary); cursor:pointer;">View Field-by-Field Mismatch Payload</summary><pre style="margin-top:6px; font-size:.75rem;">{{.MismatchesRaw.String}}</pre></details>
       {{end}}
     </div>
 
-    <!-- Interactive Actions: Wire Transfer and Re-KYC -->
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
-      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-        <!-- Test Transfer Under Limit (₦45,000) -->
-        <form class="inline" method="post" action="/app/fintech/customers/{{.ID}}/transfer">
-          <input type="hidden" name="amount" value="45000">
-          <input type="hidden" name="recipient_name" value="Adeola Trading Hub">
-          <button type="submit" class="secondary sm">
-            💸 Send ₦45,000 Standard Wire
-          </button>
-        </form>
-
-        <!-- Test Transfer Exceeding Tier Limit (₦3,500,000) -->
-        <form class="inline" method="post" action="/app/fintech/customers/{{.ID}}/transfer">
-          <input type="hidden" name="amount" value="3500000">
-          <input type="hidden" name="recipient_name" value="Global Equipment Corp">
-          <button type="submit" class="primary sm">
-            ⚡ Send ₦3,500,000 High-Value Wire
-          </button>
-        </form>
+    <!-- Interactive Outbound Transfer Console -->
+    <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border);">
+      <div style="font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-secondary); margin-bottom:12px;">
+        💸 Execute Outbound Wire Transfer &amp; Test Tier Limits
       </div>
 
-      <div>
-        <form class="inline" method="post" action="/app/fintech/customers/{{.ID}}/re-kyc">
-          <button type="submit" class="secondary sm">↻ Trigger Enhanced Re-KYC</button>
-        </form>
-      </div>
+      <form method="post" action="/app/fintech/customers/{{.ID}}/transfer" style="background:var(--bg-surface-subtle); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border);">
+        <div class="form-grid">
+          <div>
+            <label for="amount_{{.ID}}">Transfer Amount (₦ Naira)</label>
+            <input id="amount_{{.ID}}" name="amount" type="number" step="1000" value="45000" placeholder="e.g. 45000" required>
+          </div>
+          <div>
+            <label for="recipient_name_{{.ID}}">Beneficiary Name</label>
+            <input id="recipient_name_{{.ID}}" name="recipient_name" value="Adeola Logistics Ltd" required>
+          </div>
+          <div>
+            <label for="recipient_bank_{{.ID}}">Destination Bank</label>
+            <select id="recipient_bank_{{.ID}}" name="recipient_bank">
+              <option value="GTBank">Guaranty Trust Bank (GTBank)</option>
+              <option value="Zenith Bank">Zenith Bank Plc</option>
+              <option value="Access Bank">Access Bank</option>
+              <option value="Kuda Bank">Kuda Microfinance Bank</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:14px;">
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="preset-chip" onclick="document.getElementById('amount_{{.ID}}').value='45000'">
+              Set ₦45,000 (Tier 1 Pass)
+            </button>
+            <button type="button" class="preset-chip" onclick="document.getElementById('amount_{{.ID}}').value='350000'">
+              Set ₦350,000 (Tier 2 Pass)
+            </button>
+            <button type="button" class="preset-chip warning" onclick="document.getElementById('amount_{{.ID}}').value='3500000'">
+              Set ₦3,500,000 (Tier 3 Only)
+            </button>
+          </div>
+
+          <div style="display:flex; gap:8px;">
+            <button type="submit" class="primary sm">⚡ Send Wire Transfer</button>
+            <button type="submit" formaction="/app/fintech/customers/{{.ID}}/re-kyc" class="secondary sm">↻ Step-Up Re-KYC</button>
+          </div>
+        </div>
+      </form>
     </div>
 
-    <!-- Outbound Transfers Audit Table -->
+    <!-- Outbound Transfers Activity Table -->
     {{$transfers := index $.Transfers .ID}}
     {{if $transfers}}
-    <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
-      <span style="font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); display:block; margin-bottom:8px;">
+    <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+      <span style="font-size:.74rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-tertiary); display:block; margin-bottom:8px;">
         📑 Outbound Wire Transfer Activity &amp; Limit Checks
       </span>
       <table style="font-size:.82rem;">
@@ -138,11 +192,11 @@
         <tbody>
           {{range $transfers}}
           <tr>
-            <td class="mono" style="color:var(--text-faint);">{{.CreatedAt}}</td>
+            <td class="mono" style="color:var(--text-tertiary);">{{.CreatedAt}}</td>
             <td>{{.RecipientName}} <span class="hint">({{.RecipientBank}})</span></td>
             <td class="mono" style="font-weight:700; color:#fff;">{{formatKobo .AmountKobo}}</td>
             <td>{{template "badge" .Status}}</td>
-            <td style="color:var(--text-muted);">{{.Reason}}</td>
+            <td style="color:var(--text-secondary);">{{.Reason}}</td>
           </tr>
           {{end}}
         </tbody>
@@ -153,10 +207,10 @@
   {{end}}
   {{else}}
   <div class="card">
-    <div class="empty-state">
-      <span class="icon">💳</span>
-      <h3>No customer accounts onboarded yet</h3>
-      <p>Test the fuzzy name-matching scoring engine and tiered wire limits.</p>
+    <div class="empty-state" style="text-align:center; padding:40px 20px;">
+      <span class="icon" style="font-size:2.2rem; display:block; margin-bottom:10px;">💳</span>
+      <h3 style="font-size:1.2rem; margin-bottom:6px;">No customer accounts onboarded yet</h3>
+      <p style="max-width:480px; margin:0 auto 16px;">Test the fuzzy name-matching scoring engine and tiered wire limits.</p>
       <a href="/app/fintech/onboard" class="btn primary">+ Onboard First Customer</a>
     </div>
   </div>
