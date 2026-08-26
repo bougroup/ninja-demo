@@ -1,0 +1,46 @@
+{{define "aggregator_apply.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>Agent Network — Register Aggregator</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🛰️ Agent Network KYC</span>
+    <h1>Register an aggregator business</h1>
+    <p>Pulls the CAC record (<code>POST /api/company/lookup</code>) and sends a one-time hosted KYB link (<code>POST /api/kyb-flows/:id/links</code>) for document upload and AML screening.</p>
+  </div>
+
+  <div class="card">
+    <form method="post" action="/app/agents/aggregators/apply">
+      <label for="business_name">Business name</label>
+      <input id="business_name" name="business_name" value="Ninja Demo Company Limited" required>
+
+      <label for="rc_number">RC number</label>
+      <input id="rc_number" name="rc_number" value="0000000" required>
+
+      <div class="testdata">
+        <div class="testdata-label">🧪 Sandbox test data <a href="/app/sandbox-data">(full list →)</a></div>
+        <div class="chip-row">
+          <span class="chip chip-pass" onclick="NinjaDemo.fillFields({'#business_name':'Ninja Demo Company Limited','#rc_number':'0000000'})">✓ Clean — <span class="mono">0000000</span></span>
+          <span class="chip" onclick="NinjaDemo.fillFields({'#business_name':'Ninja Watchlist Holdings Limited','#rc_number':'6666666'})">⚠ AML match — <span class="mono">6666666</span></span>
+        </div>
+      </div>
+
+      <label for="contact_name">Contact person</label>
+      <input id="contact_name" name="contact_name" value="Jane Doe" required>
+
+      <label for="contact_email">Contact email</label>
+      <input id="contact_email" name="contact_email" type="email" value="jane@example.com" required>
+
+      <div class="actions">
+        <button type="submit">Submit →</button>
+      </div>
+    </form>
+  </div>
+
+  <p><a href="/app/agents">View agent dashboard →</a></p>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

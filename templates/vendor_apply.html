@@ -1,0 +1,94 @@
+{{define "vendor_apply.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>MarketPay — Supplier Onboarding &amp; Escrow Verification</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🏢 MarketPay &middot; B2B Escrow &amp; Supplier Trust</span>
+    <h1>Supplier Onboarding &amp; Corporate KYB</h1>
+    <p>
+      MarketPay safeguards ₦12,500,000 marketplace settlement vaults. Payouts are locked until the company is verified via CAC lookup (<code>POST /api/company/lookup</code>), corporate directors extracted via advanced lookup, and bulk-verified against national registries.
+    </p>
+  </div>
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Scenario Presets (Corporate CAC Testing)</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#business_name":"Ninja Demo Company Limited","#rc_number":"0000000","#contact_name":"Jane Doe","#contact_email":"jane@ninjademo.com"}'>
+        ✓ Active Corporation (3 Directors) &middot; <span class="mono">RC 0000000</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#business_name":"Watchlist Global Resources","#rc_number":"6666666","#contact_name":"Alex Watchlist","#contact_email":"alex@watchlist.ng"}'>
+        ⚠️ AML Watchlist Hit &middot; <span class="mono">RC 6666666</span>
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#business_name":"Ghost Enterprises","#rc_number":"5555555","#contact_name":"Ghost Director","#contact_email":"ghost@ghost.com"}'>
+        ✕ Unregistered Entity &middot; <span class="mono">RC 5555555</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form id="vendorForm" method="post" action="/app/vendor/apply">
+      <div class="form-grid">
+        <div>
+          <label for="business_name">Registered Corporate Name</label>
+          <input id="business_name" name="business_name" value="Ninja Demo Company Limited" required>
+        </div>
+        <div>
+          <label for="rc_number">CAC Registration Number (RC / BN)</label>
+          <input id="rc_number" name="rc_number" value="0000000" placeholder="e.g. 0000000" required>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="contact_name">Primary Executive / Contact</label>
+          <input id="contact_name" name="contact_name" value="Jane Doe" required>
+        </div>
+        <div>
+          <label for="contact_email">Corporate Notification Email</label>
+          <input id="contact_email" name="contact_email" type="email" value="jane@example.com" required>
+        </div>
+      </div>
+
+      <div>
+        <label for="director_id_type">Director Verification Rail <span class="hint">— for bulk registry cross-check</span></label>
+        <select id="director_id_type" name="director_id_type">
+          <option value="bvn">BVN (Bank Verification Number)</option>
+          <option value="nin">NIN (National Identity Number)</option>
+        </select>
+      </div>
+
+      <div class="decision-box" style="margin-top:18px;">
+        <div class="decision-header">
+          <span>🔒 Multi-Stage KYB &amp; Escrow Pipeline</span>
+          <span style="font-size:.75rem; color:var(--text-faint);">Automatic 5-Step Pipeline</span>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-item">
+            <span class="decision-item-title">Step 1: CAC Lookup</span>
+            <span class="decision-item-value">Verify Active Status</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Step 2: Director Parse</span>
+            <span class="decision-item-value">UBO &amp; Shareholding</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Step 3: Bulk Identify</span>
+            <span class="decision-item-value">1-Call Multi BVN Check</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Initiate Corporate Verification &amp; Escrow Setup →</button>
+        <a href="/app/admin" class="btn secondary">Admin Operations Console</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

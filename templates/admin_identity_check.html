@@ -1,0 +1,78 @@
+{{define "admin_identity_check.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>Identity Spot-Check — Ninja Demo</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">🔍 Ops</span>
+    <h1>Identity Spot-Check</h1>
+    <p>Ad-hoc use of <code>POST /api/identity/identify</code>, outside the vendor pipeline — e.g. compliance ops re-checking a single BVN/NIN during a dispute.</p>
+  </div>
+
+  <div class="card">
+    <form method="post" action="/app/admin/identity-check">
+      <label for="mode">Mode</label>
+      <select id="mode" name="mode">
+        <option value="verify">verify — match against supplied name/DOB</option>
+        <option value="lookup">lookup — return full registry record</option>
+      </select>
+
+      <label for="id_type">ID type</label>
+      <select id="id_type" name="id_type">
+        <option value="nin">NIN</option>
+        <option value="bvn">BVN</option>
+        <option value="ndl">NDL</option>
+      </select>
+
+      <label for="id_number">ID number</label>
+      <input id="id_number" name="id_number" value="77777777777" required>
+
+      <label for="first_name">First name <span class="hint">verify mode</span></label>
+      <input id="first_name" name="first_name" value="James">
+
+      <label for="last_name">Last name <span class="hint">verify mode</span></label>
+      <input id="last_name" name="last_name" value="Bond">
+
+      <label for="date_of_birth">Date of birth <span class="hint">verify mode</span></label>
+      <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01">
+
+      <div class="testdata">
+        <div class="testdata-label">🧪 Sandbox test data <a href="/app/sandbox-data">(full list →)</a></div>
+        <div class="chip-row">
+          <span class="chip chip-pass" onclick="NinjaDemo.fillFields({'#mode':'lookup','#id_type':'nin','#id_number':'77777777777','#first_name':'','#last_name':'','#date_of_birth':''})">Lookup — James Bond</span>
+          <span class="chip chip-pass" onclick="NinjaDemo.fillFields({'#mode':'verify','#id_type':'nin','#id_number':'77777777777','#first_name':'James','#last_name':'Bond','#date_of_birth':'1975-01-01'})">Verify — exact match</span>
+          <span class="chip chip-fail" onclick="NinjaDemo.fillFields({'#mode':'lookup','#id_type':'nin','#id_number':'55555555555','#first_name':'','#last_name':'','#date_of_birth':''})">Lookup — not found</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Run check →</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Recent checks</h2>
+    {{if .Checks}}
+    <table>
+      <tr><th>Mode</th><th>ID type</th><th>ID number</th><th>Result</th><th>When</th></tr>
+      {{range .Checks}}
+      <tr>
+        <td>{{.Mode}}</td>
+        <td>{{.IDType}}</td>
+        <td>{{.IDNumber}}</td>
+        <td>{{if .ResultRaw.Valid}}
+          <details class="raw"><summary>view</summary><pre>{{.ResultRaw.String}}</pre></details>
+        {{end}}</td>
+        <td>{{.CreatedAt}}</td>
+      </tr>
+      {{end}}
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">🔍</span>No checks run yet.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

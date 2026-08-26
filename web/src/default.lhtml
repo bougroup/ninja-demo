@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ninja Solutions Demo — One API, Six Real Jobs</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <script src="/assets/js/app.js" defer></script>
+</head>
+<body>
+
+<embed type="ham/partial" src="header.phtml"/>
+
+<div class="container">
+  <embed type="ham/page"/>
+</div>
+
+<embed type="ham/partial" src="footer.phtml"/>
+</body>
+</html>

@@ -1,0 +1,102 @@
+{{define "employee_detail.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>{{.Candidate.FullName}} — Candidate Audit</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🪪 WorkForce &middot; Candidate #CAN-{{.Candidate.ID | slice 0 8}}</span>
+    <h1>{{.Candidate.FullName}}</h1>
+    <p>
+      Role: <strong>{{if .Candidate.Role.Valid}}{{.Candidate.Role.String}}{{else}}Staff Member{{end}}</strong> &middot; 
+      Method: <span class="hint">{{.Candidate.CheckMethod}}</span> &middot; 
+      Status: {{template "badge" .Candidate.Status}}
+    </p>
+  </div>
+
+  <!-- Direct Deposit Payroll Activation Box -->
+  <div class="card highlight" style="border-color:var(--brand); background:linear-gradient(180deg, var(--surface-2), var(--surface));">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+      <div>
+        <span class="kpi-label">Monthly Direct Deposit Compensation</span>
+        <span style="font-size:1.8rem; font-weight:800; color:#34d399; font-family:'JetBrains Mono',monospace; display:block;">₦850,000.00 / month</span>
+        <span class="hint">Payroll Authorization: 
+          {{if eq .Candidate.PayrollStatus "active"}}
+            <span style="color:#34d399; font-weight:700;">✓ Active &amp; Enrolled for Direct Deposit</span>
+          {{else}}
+            <span style="color:#fbbf24; font-weight:700;">🔒 Held &middot; Awaiting Identity Clearance</span>
+          {{end}}
+        </span>
+      </div>
+
+      <div>
+        <form class="inline" method="post" action="/app/employees/{{.Candidate.ID}}/approve-payroll">
+          <button type="submit" class="primary" {{if or (ne .Candidate.Status "cleared") (eq .Candidate.PayrollStatus "active")}}disabled style="opacity:0.5;cursor:not-allowed;"{{end}}>
+            ⚡ Enroll in Direct Deposit Payroll
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {{if eq .Candidate.CheckMethod "dashboard_lookup"}}
+  <div class="card">
+    <h2>National Registry Verification Result</h2>
+    <div class="decision-box">
+      <div class="decision-header">
+        <span>🛡️ Instant Database Identity Match</span>
+        <span style="font-size:.75rem; color:var(--text-faint);">POST /api/identity/identify</span>
+      </div>
+      <div class="decision-grid">
+        <div class="decision-item">
+          <span class="decision-item-title">Registry Outcome</span>
+          <span class="decision-item-value">{{if eq .Candidate.Status "cleared"}}<span style="color:#34d399;">✓ Verified Match</span>{{else}}<span style="color:#f87171;">✕ Mismatch</span>{{end}}</span>
+        </div>
+        <div class="decision-item">
+          <span class="decision-item-title">Identity Rail</span>
+          <span class="decision-item-value mono">{{.Candidate.IDType}} {{.Candidate.IDNumber}}</span>
+        </div>
+      </div>
+    </div>
+    {{if .Candidate.IdentifyRaw.Valid}}
+    <details class="raw" open><summary>Inspect Raw Ninja Registry Payload</summary><pre>{{.Candidate.IdentifyRaw.String}}</pre></details>
+    {{end}}
+  </div>
+  {{else}}
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="margin:0;">Hosted KYC &amp; Biometric Liveness</h2>
+      <form class="inline" method="post" action="/app/employees/{{.Candidate.ID}}/simulate-liveness">
+        <button type="submit" class="secondary sm">🧪 Simulate 99% Biometric Pass</button>
+      </form>
+    </div>
+
+    {{if .Candidate.KYCVerificationURL.Valid}}
+    <p style="font-size:.86rem; color:var(--text-muted);">One-time hosted link sent to candidate for 3D selfie &amp; document capture:</p>
+    <div class="link-row">
+      <span class="mono">{{.Candidate.KYCVerificationURL.String}}</span>
+      <a class="btn secondary sm" href="{{.Candidate.KYCVerificationURL.String}}" target="_blank">Open Hosted Link →</a>
+      <button type="button" class="copy-btn sm" data-copy="{{.Candidate.KYCVerificationURL.String}}">Copy</button>
+    </div>
+    {{end}}
+
+    {{if .Live}}
+    <div class="card-row"><span class="hint">Status</span><span>{{.Live.Status}}</span></div>
+    <div class="card-row"><span class="hint">Outcome</span>{{template "badge" .Live.Outcome}}</div>
+    <div class="card-row"><span class="hint">Biometric Face Score</span><span style="font-weight:700; color:#34d399;">{{.Live.FaceScore}} (Pass)</span></div>
+    <div class="actions">
+      <a class="btn secondary sm" href="/app/admin/verifications/{{.Live.ID}}/selfie" target="_blank">🖼 View Captured Selfie</a>
+      <form class="inline" method="post" action="/app/admin/verifications/{{.Live.ID}}/resend?return_to=/app/employees/{{.Candidate.ID}}">
+        <button type="submit" class="secondary sm">↻ Resend link</button>
+      </form>
+    </div>
+    {{else}}
+    <div class="empty-state"><span class="icon">⏳</span>Awaiting candidate selfie &amp; document submission.</div>
+    {{end}}
+  </div>
+  {{end}}
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

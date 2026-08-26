@@ -1,0 +1,40 @@
+{{define "aggregator_status.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>{{.Aggregator.BusinessName}} — Status</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🛰️ Agent Network KYC</span>
+    <h1>{{.Aggregator.BusinessName}}</h1>
+    <p>Status: {{template "badge" .Aggregator.Status}}</p>
+  </div>
+
+  <div class="card">
+    <h2>Hosted KYB verification</h2>
+    {{if .Aggregator.KYBVerificationURL.Valid}}
+      <p>Complete verification here:</p>
+      <div class="link-row">
+        <span class="mono">{{.Aggregator.KYBVerificationURL.String}}</span>
+        <a class="btn secondary sm" href="{{.Aggregator.KYBVerificationURL.String}}" target="_blank">Open →</a>
+        <button type="button" class="copy-btn sm" data-copy="{{.Aggregator.KYBVerificationURL.String}}">Copy</button>
+      </div>
+      <p style="margin-top:10px">Outcome: {{if .Aggregator.KYBOutcome.Valid}}{{template "badge" .Aggregator.KYBOutcome.String}}{{else}}{{template "badge" ""}}{{end}}</p>
+
+      <div class="actions">
+        <form class="inline" method="post" action="/app/admin/kyb-verifications/{{.Aggregator.KYBVerificationID.String}}/resend?return_to=/app/agents/aggregators/{{.Aggregator.ID}}">
+          <button type="submit" class="secondary sm">↻ Resend KYB link</button>
+        </form>
+        <form class="inline" method="post" action="/app/admin/kyb-verifications/{{.Aggregator.KYBVerificationID.String}}/cancel?return_to=/app/agents/aggregators/{{.Aggregator.ID}}" data-confirm="Cancel this verification?">
+          <button type="submit" class="danger sm">✕ Cancel verification</button>
+        </form>
+      </div>
+    {{else}}
+      <div class="empty-state"><span class="icon">⏳</span>No KYB link generated yet.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

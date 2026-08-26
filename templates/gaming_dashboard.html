@@ -1,0 +1,170 @@
+{{define "gaming_dashboard.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexBet Sportsbook — Operations &amp; Payout Audit</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <span class="eyebrow">🎰 ApexBet Sportsbook &middot; Live Operations</span>
+      <h1>Punter Management &amp; Payout Gate</h1>
+      <p>
+        Real-time payout validation and AML controls. High-value withdrawals and suspicious betting activity trigger immediate identity re-verification via Ninja.
+      </p>
+    </div>
+    <div>
+      <a href="/app/gaming/signup" class="btn primary">+ Register New Punter</a>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Active Punter Accounts</span>
+      <span class="kpi-value">{{len .Players}}</span>
+      <span class="kpi-sub"><span class="badge pass">Verified</span> Live on Platform</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total Player Winnings</span>
+      <span class="kpi-value">₦3,450,000</span>
+      <span class="kpi-sub">Subject to Payout Age-Check Gate</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Regulatory Fine Protection</span>
+      <span class="kpi-value">100%</span>
+      <span class="kpi-sub">0 Underage Violations Permitted</span>
+    </div>
+  </div>
+
+  {{if .Players}}
+  {{range .Players}}
+  <div class="card highlight">
+    <div class="card-row" style="border:none; padding-bottom:12px;">
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
+          <h2 style="margin:0;">{{.FullName}}</h2>
+          {{template "badge" .Status}}
+          {{if .SelfExcluded}}<span class="badge fail">Self-Excluded</span>{{end}}
+        </div>
+        <span class="hint">{{.IDType | upper}}: <span class="mono">{{.IDNumber}}</span> &middot; DOB: {{.DateOfBirth}} (Age: {{ageFromDOB .DateOfBirth}})</span>
+      </div>
+
+      <div style="text-align:right;">
+        <span class="hint" style="display:block;">Wallet Balance / Unclaimed Winnings</span>
+        <span style="font-size:1.3rem; font-weight:800; color:#34d399; font-family:'JetBrains Mono',monospace;">{{formatKobo .WinningsKobo}}</span>
+      </div>
+    </div>
+
+    <!-- Live Compliance Decision Summary -->
+    <div class="decision-box">
+      <div class="decision-header">
+        <span>🛡️ Real-Time Compliance Health Check</span>
+        <span style="font-size:.78rem; color:var(--text-faint);">Post-Registration Status</span>
+      </div>
+      <div class="decision-grid">
+        <div class="decision-item">
+          <span class="decision-item-title">Age Gate</span>
+          <span class="decision-item-value">
+            {{if lt (ageFromDOB .DateOfBirth) 18}}<span style="color:#f87171;">✕ Underage (Age {{ageFromDOB .DateOfBirth}})</span>
+            {{else}}<span style="color:#34d399;">✓ Adult (Age {{ageFromDOB .DateOfBirth}})</span>{{end}}
+          </span>
+        </div>
+        <div class="decision-item">
+          <span class="decision-item-title">Self-Exclusion Registry</span>
+          <span class="decision-item-value">
+            {{if .SelfExcluded}}<span style="color:#f87171;">✕ Active Blacklist</span>
+            {{else}}<span style="color:#34d399;">✓ Clean Record</span>{{end}}
+          </span>
+        </div>
+        <div class="decision-item">
+          <span class="decision-item-title">Payout Eligibility</span>
+          <span class="decision-item-value">
+            {{if or .SelfExcluded (lt (ageFromDOB .DateOfBirth) 18)}}<span style="color:#f87171;">⛔ Payouts Locked</span>
+            {{else}}<span style="color:#34d399;">✓ ₦250k Ready</span>{{end}}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <!-- Payout Trigger -->
+        <form class="inline" method="post" action="/app/gaming/players/{{.ID}}/payout">
+          <input type="hidden" name="amount" value="250000">
+          <button type="submit" class="primary sm" {{if or .SelfExcluded (eq .Status "blocked_underage")}}disabled style="opacity:0.4;cursor:not-allowed;"{{end}}>
+            ⚡ Trigger ₦250,000 Payout Gate
+          </button>
+        </form>
+
+        <!-- Bet Placement Trigger -->
+        <form class="inline" method="post" action="/app/gaming/players/{{.ID}}/bet">
+          <input type="hidden" name="stake" value="50000">
+          <button type="submit" class="secondary sm" {{if or .SelfExcluded (eq .Status "blocked_underage")}}disabled style="opacity:0.4;cursor:not-allowed;"{{end}}>
+            🎲 Place ₦50,000 Wager
+          </button>
+        </form>
+
+        <!-- High-Stakes AML Bet Trigger -->
+        <form class="inline" method="post" action="/app/gaming/players/{{.ID}}/bet">
+          <input type="hidden" name="stake" value="750000">
+          <button type="submit" class="amber sm" {{if or .SelfExcluded (eq .Status "blocked_underage")}}disabled style="opacity:0.4;cursor:not-allowed;"{{end}}>
+            ⚠️ Place ₦750,000 High-Stakes Bet
+          </button>
+        </form>
+      </div>
+
+      <div>
+        {{if not .SelfExcluded}}
+        <form class="inline" method="post" action="/app/gaming/players/{{.ID}}/self-exclude" data-confirm="Permanently add player to Self-Exclusion registry? All withdrawals and betting will be frozen.">
+          <button type="submit" class="danger sm">⛔ Self-Exclude Player</button>
+        </form>
+        {{else}}
+        <span class="badge fail">Self-Exclusion Active</span>
+        {{end}}
+      </div>
+    </div>
+
+    <!-- Payout Audit History -->
+    {{$payouts := index $.PlayerPayouts .ID}}
+    {{if $payouts}}
+    <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">
+      <span style="font-size:.75rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted); display:block; margin-bottom:8px;">
+        📜 Payout Decision History &amp; Identity Audit
+      </span>
+      <table style="font-size:.82rem;">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Amount</th>
+            <th>Verification Status</th>
+            <th>Compliance Decision Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $payouts}}
+          <tr>
+            <td class="mono" style="color:var(--text-faint);">{{.CreatedAt}}</td>
+            <td class="mono" style="font-weight:700; color:#fff;">{{formatKobo .AmountKobo}}</td>
+            <td>{{template "badge" .Status}}</td>
+            <td style="color:var(--text-muted);">{{.Reason}}</td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{end}}
+  </div>
+  {{end}}
+  {{else}}
+  <div class="card">
+    <div class="empty-state">
+      <span class="icon">🎰</span>
+      <h3>No punter accounts active yet</h3>
+      <p>Test the underage gate, AML threshold, or self-exclusion controls with realistic presets.</p>
+      <a href="/app/gaming/signup" class="btn primary">+ Create First Punter Account</a>
+    </div>
+  </div>
+  {{end}}
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

@@ -1,0 +1,16 @@
+services:
+  ninja-demo:
+    build: .
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=/data/data.db
+      - ADDR=:4000
+    volumes:
+      - ninja-demo-data:/data
+    restart: unless-stopped
+
+volumes:
+  ninja-demo-data:

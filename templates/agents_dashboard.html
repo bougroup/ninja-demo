@@ -1,0 +1,136 @@
+{{define "agents_dashboard.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexAgent — Agency Banking Fleet Operations</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <span class="eyebrow">🛰️ ApexAgent &middot; POS Fleet Governance</span>
+      <h1>Agency Banking &amp; Float Security</h1>
+      <p>
+        Fleet operations and multi-terminal syndicate monitoring. Prevents multi-terminal identity fraud rings and enforces automated re-KYC before restoring cash floats to dormant agents.
+      </p>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <a href="/app/agents/recruit" class="btn primary">+ Recruit Field Agent</a>
+      <a href="/app/agents/aggregators/apply" class="btn secondary">+ Aggregator KYB</a>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Active POS Terminals</span>
+      <span class="kpi-value">{{len .Agents}}</span>
+      <span class="kpi-sub"><span class="badge pass">Online</span> Hardware Deployed</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Total Float at Risk</span>
+      <span class="kpi-value">{{formatKobo (mul (len .Agents) 200000000)}}</span>
+      <span class="kpi-sub">₦2.0M Float / Hardware Unit</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Syndicate Alarm</span>
+      <span class="kpi-value">{{len .DupesById}} Flags</span>
+      <span class="kpi-sub">Multi-Terminal BVN Collisions</span>
+    </div>
+  </div>
+
+  <!-- Interactive Action: Simulate Multi-Terminal Fraud Ring -->
+  <div class="preset-bar" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+    <div>
+      <span style="font-weight:700; font-size:.9rem; color:#fff;">🚨 Fraud Ring Demonstration Simulation</span>
+      <p style="margin:2px 0 0; font-size:.8rem; color:var(--text-secondary);">Simulate an operator attempting to register 3 POS terminals across Lagos, Ibadan, and Abuja under the same BVN.</p>
+    </div>
+    <form method="post" action="/app/agents/simulate-fraud-ring">
+      <button type="submit" class="secondary sm">⚡ Trigger Multi-Terminal Fraud Ring Alarm</button>
+    </form>
+  </div>
+
+  <!-- Field Agents Fleet Table -->
+  <div class="card highlight">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">POS Hardware Fleet &amp; Identity Bindings</h2>
+      <span class="hint">One BVN : One Active Float</span>
+    </div>
+    {{if .Agents}}
+    <table>
+      <thead>
+        <tr>
+          <th>Agent Name</th>
+          <th>Terminal ID</th>
+          <th>Identity Rail</th>
+          <th>Cash Float</th>
+          <th>Compliance Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Agents}}
+        <tr>
+          <td><strong>{{.FullName}}</strong></td>
+          <td><span class="mono" style="color:#38bdf8; font-weight:700;">{{.TerminalID}}</span></td>
+          <td><span class="mono">{{.IDType | upper}}: {{.IDNumber}}</span></td>
+          <td><span class="mono" style="font-weight:700; color:#34d399;">{{if eq .Status "dormant"}}₦0 (Frozen){{else}}₦2,000,000{{end}}</span></td>
+          <td>
+            {{if eq .Status "flagged_duplicate_bvn"}}
+              <span class="badge fail" style="background:#7f1d1d; color:#fecaca;">⚠️ MULTI-TERMINAL BVN DETECTED</span>
+            {{else if eq .Status "dormant"}}
+              <span class="badge pending">Dormant (Float Held)</span>
+            {{else}}
+              {{template "badge" .Status}}
+            {{end}}
+          </td>
+          <td>
+            <form class="inline" method="post" action="/app/agents/{{.ID}}/reactivate">
+              <button type="submit" class="secondary sm" title="Re-verify against Ninja before restoring float">↻ Re-verify</button>
+            </form>
+            {{if ne .Status "dormant"}}
+            <form class="inline" method="post" action="/app/agents/{{.ID}}/deactivate">
+              <button type="submit" class="danger sm" title="Suspend terminal and freeze float">Suspend</button>
+            </form>
+            {{end}}
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">🛰️</span>No agents recruited yet. <a href="/app/agents/recruit">Recruit first field agent</a>.</div>
+    {{end}}
+  </div>
+
+  <!-- Aggregators Section -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">Master Aggregators (Super-Agents)</h2>
+      <a href="/app/agents/aggregators/apply" class="btn secondary sm">+ Onboard Aggregator</a>
+    </div>
+    {{if .Aggregators}}
+    <table>
+      <thead>
+        <tr>
+          <th>Business Name</th>
+          <th>CAC RC Number</th>
+          <th>Aggregator Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Aggregators}}
+        <tr>
+          <td><strong>{{.BusinessName}}</strong></td>
+          <td><span class="mono">{{.RCNumber}}</span></td>
+          <td>{{template "badge" .Status}}</td>
+          <td><a class="btn secondary sm" href="/app/agents/aggregators/{{.ID}}">Review KYB →</a></td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">🏢</span>No corporate aggregators registered yet.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

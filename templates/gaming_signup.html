@@ -1,0 +1,89 @@
+{{define "gaming_signup.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexBet Sportsbook — KYC Punter Gate</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  <div class="page-head">
+    <span class="eyebrow">🎰 ApexBet Sportsbook &middot; Compliance Gate</span>
+    <h1>Player Registration &amp; Age Gate</h1>
+    <p>
+      Every punter registration is validated server-side against national registries via <code>POST /api/identity/identify</code>. Underage punters (&lt;18) and identities listed on the National Self-Exclusion Registry are permanently blocked before wallet creation.
+    </p>
+  </div>
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Scenario Presets (Click to Auto-Fill &amp; Test)</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#full_name":"James Bond","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777"}'>
+        ✓ Verified Adult (Age 51) &middot; <span class="mono">77777777777</span>
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#full_name":"Tobi Minor","#date_of_birth":"2010-06-15","#id_type":"bvn","#id_number":"88888888888"}'>
+        ⛔ Underage Punter (Age 16) &middot; <span class="mono">88888888888</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#full_name":"Alex Watchlist","#date_of_birth":"1982-03-20","#id_type":"bvn","#id_number":"66666666666"}'>
+        ⚠️ AML Watchlist Hit &middot; <span class="mono">66666666666</span>
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#full_name":"Unknown Punter","#date_of_birth":"1995-08-10","#id_type":"bvn","#id_number":"55555555555"}'>
+        ✕ Unregistered ID &middot; <span class="mono">55555555555</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form id="signupForm" method="post" action="/app/gaming/signup">
+      <div class="form-grid">
+        <div>
+          <label for="full_name">Punter Full Name</label>
+          <input id="full_name" name="full_name" value="James Bond" placeholder="e.g. James Bond" required>
+        </div>
+        <div>
+          <label for="date_of_birth">Date of Birth <span class="hint">(Must be 18+)</span></label>
+          <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01" required>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="id_type">Verification Rail</label>
+          <select id="id_type" name="id_type">
+            <option value="bvn">BVN (Bank Verification Number)</option>
+            <option value="nin">NIN (National Identity Number)</option>
+          </select>
+        </div>
+        <div>
+          <label for="id_number">National ID Number</label>
+          <input id="id_number" name="id_number" value="77777777777" placeholder="11 digits" required>
+        </div>
+      </div>
+
+      <div class="decision-box" style="margin-top:18px;">
+        <div class="decision-header">
+          <span>🛡️ Automatic Compliance Decision Engine</span>
+          <span style="font-size:.75rem; color:var(--text-faint);">NLRC / Central Bank Aligned</span>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-item">
+            <span class="decision-item-title">Age Rule</span>
+            <span class="decision-item-value">DOB &ge; 18 Years</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Syndicate Rule</span>
+            <span class="decision-item-value">1 Account per BVN</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Self-Exclusion</span>
+            <span class="decision-item-value">Real-Time Registry</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Verify &amp; Activate Account →</button>
+        <a href="/app/gaming" class="btn secondary">View Active Punters</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

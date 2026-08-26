@@ -1,0 +1,126 @@
+{{define "vendor_status.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>{{.Vendor.BusinessName}} — Escrow Status</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🏢 MarketPay &middot; Escrow Vault #ESC-{{.Vendor.ID | slice 0 8}}</span>
+    <h1>{{.Vendor.BusinessName}}</h1>
+    <p>Corporate Status: {{template "badge" .Vendor.Status}} &middot; CAC RC: <span class="mono">{{.Vendor.RCNumber}}</span></p>
+  </div>
+
+  <!-- Escrow Settlement Vault Box -->
+  <div class="card highlight" style="border-color:var(--brand); background:linear-gradient(180deg, var(--surface-2), var(--surface));">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+      <div>
+        <span class="kpi-label">Marketplace Escrow Vault Balance</span>
+        <span style="font-size:2rem; font-weight:800; color:#34d399; font-family:'JetBrains Mono',monospace; display:block;">₦12,500,000.00</span>
+        <span class="hint">Disbursement Status: 
+          {{if .Vendor.PayoutWalletID.Valid}}
+            <span style="color:#34d399; font-weight:700;">✓ Disbursed to Wallet {{.Vendor.PayoutWalletID.String}}</span>
+          {{else}}
+            <span style="color:#fbbf24; font-weight:700;">🔒 Held in Compliance Escrow</span>
+          {{end}}
+        </span>
+      </div>
+
+      <div style="text-align:right;">
+        <span class="kpi-label">Director Liveness Cleared</span>
+        <span style="font-size:1.5rem; font-weight:800; color:#fff; font-family:'JetBrains Mono',monospace;">{{.ClearedCount}} / {{len .Directors}} Cleared</span>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:18px; border-top:1px solid var(--border); padding-top:14px;">
+      <form class="inline" method="post" action="/app/vendor/{{.Vendor.ID}}/release-escrow">
+        <button type="submit" class="primary" {{if .Vendor.PayoutWalletID.Valid}}disabled style="opacity:0.5;cursor:not-allowed;"{{end}}>
+          ⚡ Release ₦12,500,000 Escrow to Payout Wallet
+        </button>
+      </form>
+      <form class="inline" method="post" action="/app/vendor/{{.Vendor.ID}}/simulate-webhook?target=all">
+        <button type="submit" class="secondary sm">
+          🧪 Simulate All Webhooks Passed
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Corporate KYB Section -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="margin:0;">1. Corporate Business Verification (KYB)</h2>
+      {{if .Vendor.KYBOutcome.Valid}}{{template "badge" .Vendor.KYBOutcome.String}}{{else}}{{template "badge" "pending"}}{{end}}
+    </div>
+    {{if .Vendor.KYBVerificationURL.Valid}}
+      <p style="font-size:.88rem;">Complete corporate documentation &amp; proof of address via Ninja hosted flow:</p>
+      <div class="link-row">
+        <span class="mono">{{.Vendor.KYBVerificationURL.String}}</span>
+        <a class="btn secondary sm" href="{{.Vendor.KYBVerificationURL.String}}" target="_blank">Open Hosted Link →</a>
+        <button type="button" class="copy-btn sm" data-copy="{{.Vendor.KYBVerificationURL.String}}">Copy</button>
+      </div>
+    {{else}}
+      <div class="empty-state"><span class="icon">⏳</span>No KYB link generated yet.</div>
+    {{end}}
+  </div>
+
+  <!-- Director KYC Section -->
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="margin:0;">2. Executive Directors &amp; UBO Verification (KYC)</h2>
+      <span class="hint">{{.ClearedCount}} of {{len .Directors}} verified</span>
+    </div>
+    {{if .Directors}}
+    <table>
+      <thead>
+        <tr>
+          <th>Director Name</th>
+          <th>Bulk Registry Match</th>
+          <th>Liveness Link</th>
+          <th>Outcome</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Directors}}
+        <tr>
+          <td><strong>{{if .FullName.Valid}}{{.FullName.String}}{{else}}Director{{end}}</strong></td>
+          <td>{{if .BulkIdentifyStatus.Valid}}{{template "badge" .BulkIdentifyStatus.String}}{{else}}—{{end}}</td>
+          <td>
+            {{if .KYCVerificationURL.Valid}}
+              <a href="{{.KYCVerificationURL.String}}" target="_blank" class="btn secondary sm" style="padding:3px 8px; font-size:.75rem;">Open Link ↗</a>
+            {{else}}—{{end}}
+          </td>
+          <td>{{if .KYCOutcome.Valid}}{{template "badge" .KYCOutcome.String}}{{else}}{{template "badge" "pending"}}{{end}}</td>
+          <td>
+            <form class="inline" method="post" action="/app/vendor/{{$.Vendor.ID}}/simulate-webhook?target={{.ID}}">
+              <button type="submit" class="ghost sm" style="font-size:.72rem; color:#38bdf8;">Simulate Pass</button>
+            </form>
+          </td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">👥</span>No directors extracted from CAC registry yet.</div>
+    {{end}}
+  </div>
+
+  <!-- Payout Wallet Status -->
+  <div class="card">
+    <h2>3. Settlement Payout Wallet</h2>
+    {{if .Vendor.PayoutWalletID.Valid}}
+      <div style="padding:12px; background:var(--green-bg); border:1px solid var(--green-border); border-radius:var(--radius-sm); color:#34d399; font-weight:700;">
+        ✓ Settlement Wallet Active: <span class="mono">{{.Vendor.PayoutWalletID.String}}</span> &middot; Ready for Automated Escrow Payouts
+      </div>
+    {{else}}
+      <p style="color:var(--text-muted);">
+        Payouts remain frozen in escrow until corporate KYB and 100% of executive directors complete liveness verification.
+      </p>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

@@ -1,0 +1,76 @@
+{{define "admin_dashboard.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>Vendor Admin — Ninja Demo</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">📋 Vendor Onboarding · Ops</span>
+    <h1>Vendors</h1>
+    <p>Every marketplace vendor application, with live status pulled from the local database and from Ninja itself.</p>
+  </div>
+
+  <div class="card">
+  {{if .Vendors}}
+  <table>
+    <tr><th>Business</th><th>RC number</th><th>Status</th><th>Payout wallet</th><th></th></tr>
+    {{range .Vendors}}
+    <tr>
+      <td>{{.BusinessName}}</td>
+      <td class="mono">{{.RCNumber}}</td>
+      <td>{{template "badge" .Status}}</td>
+      <td class="mono">{{if .PayoutWalletID.Valid}}{{.PayoutWalletID.String}}{{else}}—{{end}}</td>
+      <td><a class="btn secondary sm" href="/app/admin/vendors/{{.ID}}">Review →</a></td>
+    </tr>
+    {{end}}
+  </table>
+  {{else}}
+  <div class="empty-state"><span class="icon">🏢</span>No vendors have applied yet. <a href="/app/vendor/apply">Submit one</a>.</div>
+  {{end}}
+  </div>
+
+  <div class="section-title"><h3>Live from Ninja</h3><span class="rule"></span></div>
+
+  <div class="card">
+    <h2>KYB verifications <span class="hint mono">GET /api/kyb-verifications</span></h2>
+    {{if .KYBVerifications}}
+    <table>
+      <tr><th>Verification ID</th><th>Customer ref</th><th>Company</th><th>Status</th><th>Outcome</th></tr>
+      {{range .KYBVerifications}}
+      <tr>
+        <td class="mono">{{.ID}}</td>
+        <td class="mono">{{.CustomerRef}}</td>
+        <td>{{.CompanyName}}</td>
+        <td>{{.Status}}</td>
+        <td>{{template "badge" .Outcome}}</td>
+      </tr>
+      {{end}}
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">📭</span>No KYB verification sessions yet.</div>
+    {{end}}
+  </div>
+
+  <div class="card">
+    <h2>KYC verifications <span class="hint mono">GET /api/verifications</span></h2>
+    {{if .KYCVerifications}}
+    <table>
+      <tr><th>Verification ID</th><th>Customer ref</th><th>ID type</th><th>Status</th><th>Outcome</th><th>Score</th></tr>
+      {{range .KYCVerifications}}
+      <tr>
+        <td class="mono">{{.ID}}</td>
+        <td class="mono">{{.CustomerRef}}</td>
+        <td>{{.IDType}}</td>
+        <td>{{.Status}}</td>
+        <td>{{template "badge" .Outcome}}</td>
+        <td>{{.Score}}</td>
+      </tr>
+      {{end}}
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">📭</span>No KYC verification sessions yet.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

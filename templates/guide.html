@@ -1,0 +1,68 @@
+{{define "guide.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>How This Demo Works — Ninja Demo</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">📖 Guide</span>
+    <h1>How each scenario works</h1>
+    <p>Every scenario calls the Ninja <strong>sandbox only</strong> — never production. Every form field already has a working value from <a href="/app/sandbox-data">Ninja's documented test fixtures</a>, so you can submit any form as-is. Two scenarios need one extra step first (see the callout below) — everything else works the moment the server is running.</p>
+  </div>
+
+  <div class="card" style="border-color:var(--amber-border);background:var(--amber-bg)">
+    <h2 style="color:#854d0e">⚠ Two scenarios need a public webhook URL</h2>
+    <p style="color:#854d0e">Vendor Onboarding and the Agent Network's aggregator registration create <em>hosted</em> KYB/KYC flows — Ninja emails your business/director a link, they fill it out on Ninja's own page, and Ninja calls your server back on completion. Ninja validates that <code>webhook_url</code> is a real public address <strong>before</strong> it will even create the flow — <code>http://localhost:4000</code> is rejected outright. Point a tunnel (ngrok, cloudflared) or a real deployment at this server, set <code>PUBLIC_URL</code> in <code>.env</code> to that address, and restart. Every other scenario below is a direct server-to-sandbox call with no callback involved, so it needs none of this.</p>
+  </div>
+
+  <div class="card">
+    <h2>🏢 Vendor Onboarding <span class="hint">needs PUBLIC_URL</span></h2>
+    <p><strong>What it's for:</strong> a marketplace vendor can't get paid until their business and every director clear verification — stops payments to shell companies and ghost suppliers.</p>
+    <p><strong>Flow:</strong> Apply (business name, RC number, contact, director ID type) → server pulls the CAC record (<code>company/lookup</code>) and directors/shareholders (<code>company/advanced-lookup</code>) → bulk-identifies every director in one call → sends the business a hosted KYB link and each director a hosted KYC link → Ninja calls back on completion → once the business and every director pass, a payout wallet activates.</p>
+    <p><strong>Try it:</strong> the form is pre-filled with RC <span class="mono">0000000</span> (resolves to "Ninja Demo Company Limited"). Submit as-is.</p>
+  </div>
+
+  <div class="card">
+    <h2>🎰 Gaming &amp; Betting <span class="hint">works immediately</span></h2>
+    <p><strong>What it's for:</strong> age/identity verification at signup, and a re-check before every payout — stops bonus-farming (one person, many accounts).</p>
+    <p><strong>Flow:</strong> Signup form → server calls <code>identify</code> (verify mode) directly → under-18 or no-match is blocked, everyone else activates. A duplicate signup with the same ID is blocked outright (one identity, one account). From the dashboard, "Payout re-check" re-runs the same verify call before releasing funds.</p>
+    <p><strong>Try it:</strong> pre-filled with James Bond / <span class="mono">77777777777</span> (passes). Use the "Not found" chip to see a block.</p>
+  </div>
+
+  <div class="card">
+    <h2>💳 Fintechs <span class="hint">works immediately</span></h2>
+    <p><strong>What it's for:</strong> per-field name-matching instead of a blunt pass/fail — "Chukwuemeka" vs "Chukwuemeka Emeka" is the same person, not a rejected application.</p>
+    <p><strong>Flow:</strong> Onboard form → server calls <code>identify</code> (verify mode) → the response's per-field score/recommendation is stored and shown. "Re-run KYC" from the dashboard re-verifies a flagged or high-value account later.</p>
+    <p><strong>Try it:</strong> pre-filled with an exact match. The "Spelling variant" chip reuses the same sandbox ID with a slightly different name to show a partial score.</p>
+  </div>
+
+  <div class="card">
+    <h2>🌍 International Companies <span class="hint">works immediately</span></h2>
+    <p><strong>What it's for:</strong> onboarding Nigerian customers from anywhere, no local entity required — a raw API console for teams integrating directly.</p>
+    <p><strong>Flow:</strong> single (<code>identify</code>, lookup or verify) or bulk (<code>bulk-identify</code>, up to 25 IDs) — every call server-side, every result logged to a visible audit trail (timestamp, request ID, operator).</p>
+    <p><strong>Try it:</strong> every field is pre-filled; the bulk chip queues one ID per documented outcome (found, AML match, not found, simulated failure).</p>
+  </div>
+
+  <div class="card">
+    <h2>🛰️ Agent Network KYC <span class="hint">recruit works immediately &middot; aggregator needs PUBLIC_URL</span></h2>
+    <p><strong>What it's for:</strong> field recruitment of payment agents, and catching "one BVN behind fifty terminals" — an identity already tied to another terminal, the classic agent-network fraud pattern.</p>
+    <p><strong>Flow:</strong> Recruit form → server calls <code>identify</code> (verify mode) on the spot → a duplicate identity across terminals is flagged (not silently blocked) for review. Separately, aggregator businesses go through the same hosted-KYB pattern as Vendor Onboarding.</p>
+    <p><strong>Try it:</strong> recruit James Bond twice with different terminal IDs to see the duplicate flag fire.</p>
+  </div>
+
+  <div class="card">
+    <h2>🪪 Employee Verification <span class="hint">dashboard lookup works immediately &middot; hosted link needs PUBLIC_URL</span></h2>
+    <p><strong>What it's for:</strong> confirming the person who resumes Monday is the person you interviewed.</p>
+    <p><strong>Flow:</strong> "Dashboard lookup" calls <code>identify</code> (verify mode) server-side and clears instantly. "Hosted link" instead sends the candidate a selfie + liveness link — for remote candidates the simple lookup can't cover.</p>
+    <p><strong>Try it:</strong> dashboard lookup is pre-filled and works right away; switch the check method to see the hosted-link path.</p>
+  </div>
+
+  <div class="section-title"><h3>Reference</h3><span class="rule"></span></div>
+  <div class="ops-strip">
+    <a href="/app/sandbox-data">🧪 Full sandbox test-data table</a>
+    <a href="/app/admin/webhooks">🔔 Webhook delivery log</a>
+    <a href="https://ninja.ng/docs/#getting-started" target="_blank" rel="noopener">📚 Ninja's own docs</a>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

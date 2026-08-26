@@ -1,0 +1,94 @@
+{{define "head"}}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/assets/css/app.css">
+<script src="/assets/js/app.js" defer></script>
+{{end}}
+
+{{define "nav"}}
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="/">
+      <img class="logo-img" src="/assets/img/ninja_logo_white.png" alt="Ninja">
+      <span class="brand-badge">Fintech Suite</span>
+    </a>
+    <nav class="nav-groups">
+      <div class="nav-group">
+        <span class="nav-group-label">Verticals</span>
+        <a class="nav-link{{if hasPrefix .Path "/app/vendor"}} active{{end}}" href="/app/vendor/apply">🏢 MarketPay</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/gaming"}} active{{end}}" href="/app/gaming">🎰 ApexBet</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/fintech"}} active{{end}}" href="/app/fintech">💳 ApexPay</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/international"}} active{{end}}" href="/app/international/console">🌍 ApexGlobal</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/agents"}} active{{end}}" href="/app/agents">🛰️ ApexAgent</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/employees"}} active{{end}}" href="/app/employees">🪪 WorkForce</a>
+      </div>
+      <div class="nav-group">
+        <span class="nav-group-label">Ops</span>
+        <a class="nav-link{{if and (hasPrefix .Path "/app/admin") (not (hasPrefix .Path "/app/admin/identity-check")) (not (hasPrefix .Path "/app/admin/webhooks"))}} active{{end}}" href="/app/admin">Dashboard</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/admin/identity-check"}} active{{end}}" href="/app/admin/identity-check">Spot-Check</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/admin/webhooks"}} active{{end}}" href="/app/admin/webhooks">Webhooks</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/sandbox-data"}} active{{end}}" href="/app/sandbox-data">🧪 Fixtures</a>
+        <a class="nav-link{{if hasPrefix .Path "/app/guide"}} active{{end}}" href="/app/guide">📖 Guide</a>
+      </div>
+    </nav>
+    <div class="header-tools">
+      <form method="POST" action="/app/toggle-mock-mode" style="display:inline; margin:0;">
+        <input type="hidden" name="return_to" value="{{.Path}}">
+        <button type="submit" class="mode-toggle-btn {{if .IsMockMode}}mock{{else}}live{{end}}" title="Toggle between live sandbox and high-fidelity offline simulator">
+          {{if .IsMockMode}}⚡ Offline Simulator{{else}}🟢 Live Sandbox API{{end}}
+        </button>
+      </form>
+    </div>
+  </div>
+</header>
+{{end}}
+
+{{define "badge"}}{{if .}}<span class="badge {{badgeClass .}}">{{.}}</span>{{else}}<span class="badge pending">pending</span>{{end}}{{end}}
+
+{{define "stepper"}}
+<div class="stepper">
+  {{$current := .Current}}
+  {{range $i, $label := .Steps}}
+    {{if gt $i 0}}<div class="step-connector"></div>{{end}}
+    <div class="step {{if lt $i $current}}done{{else if eq $i $current}}current{{end}}">
+      <span class="step-num">{{if lt $i $current}}✓{{else}}{{add1 $i}}{{end}}</span>
+      <span class="step-label">{{$label}}</span>
+    </div>
+  {{end}}
+</div>
+{{end}}
+
+{{define "activity_bar"}}
+{{if .RecentAPILogs}}
+<div class="activity-bar">
+  <div class="activity-bar-header">
+    <span style="font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted);">
+      📡 Live Sandbox API Activity Log
+    </span>
+    <span style="font-size:.74rem; color:var(--text-faint);">Latency Monitored &middot; Auto-Logged</span>
+  </div>
+  <div class="activity-list">
+    {{range .RecentAPILogs}}
+    <div class="activity-row">
+      <div>
+        <span class="activity-method">{{.Method}}</span>
+        <span style="color:#fff; margin-left:6px;">{{.Endpoint}}</span>
+        {{if .IsMock}}<span style="font-size:.65rem; padding:1px 5px; border-radius:4px; background:var(--amber-bg); color:#fbbf24; margin-left:6px;">SIMULATED</span>{{else}}<span style="font-size:.65rem; padding:1px 5px; border-radius:4px; background:var(--green-bg); color:#34d399; margin-left:6px;">LIVE SANDBOX</span>{{end}}
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="{{if eq .StatusCode 200}}activity-status-200{{else}}activity-status-err{{end}}">HTTP {{.StatusCode}}</span>
+        <span class="activity-duration">{{.DurationMs}}ms</span>
+      </div>
+    </div>
+    {{end}}
+  </div>
+</div>
+{{end}}
+{{end}}
+
+{{define "footer"}}
+{{template "activity_bar" .}}
+<div class="footer">
+  Fintech Business Showcase &middot; Powered by the <a href="https://ninja.ng/" target="_blank" rel="noopener">Ninja KYC/KYB Sandbox API</a>.
+</div>
+{{end}}

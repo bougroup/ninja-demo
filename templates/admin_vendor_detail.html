@@ -1,0 +1,90 @@
+{{define "admin_vendor_detail.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>{{.Vendor.BusinessName}} — Admin</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">📋 Vendor Onboarding · Ops</span>
+    <h1>{{.Vendor.BusinessName}}</h1>
+    <p>Status: {{template "badge" .Vendor.Status}} &nbsp;·&nbsp; RC: <span class="mono">{{.Vendor.RCNumber}}</span></p>
+  </div>
+
+  <div class="card">
+    <h2>Company record <span class="hint mono">POST /api/company/lookup</span></h2>
+    <div class="card-row"><span class="hint">Registration status</span><span>{{if .Vendor.CompanyStatus.Valid}}{{.Vendor.CompanyStatus.String}}{{end}}</span></div>
+    <div class="card-row"><span class="hint">Company type</span><span>{{if .Vendor.CompanyType.Valid}}{{.Vendor.CompanyType.String}}{{end}}</span></div>
+    <div class="card-row"><span class="hint">Nature of business</span><span>{{if .Vendor.CompanyNatureOfBusiness.Valid}}{{.Vendor.CompanyNatureOfBusiness.String}}{{end}}</span></div>
+    <div class="card-row"><span class="hint">Registered email</span><span>{{if .Vendor.CompanyEmail.Valid}}{{.Vendor.CompanyEmail.String}}{{end}}</span></div>
+    <div class="card-row"><span class="hint">Address</span><span>{{if .Vendor.CompanyAddress.Valid}}{{.Vendor.CompanyAddress.String}}{{end}}</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Hosted KYB verification <span class="hint">live from Ninja</span></h2>
+    {{if .KYBLive}}
+    <div class="card-row"><span class="hint">Verification ID</span><span class="mono">{{.KYBLive.ID}}</span></div>
+    <div class="card-row"><span class="hint">Status</span><span>{{.KYBLive.Status}}</span></div>
+    <div class="card-row"><span class="hint">Outcome</span>{{template "badge" .KYBLive.Outcome}}</div>
+    <div class="card-row"><span class="hint">Sandbox</span><span>{{.KYBLive.Sandbox}}</span></div>
+
+    {{if .KYBLive.AML}}
+    <h3 style="margin-top:18px">AML / sanctions screening</h3>
+    <table>
+      <tr><th>List</th><th>Name</th><th>Score</th><th>Status</th></tr>
+      {{range .KYBLive.AML}}
+      <tr><td>{{.List}}</td><td>{{.Name}}</td><td>{{.Score}}</td><td>{{.Status}}</td></tr>
+      {{end}}
+    </table>
+    {{end}}
+
+    <h3 style="margin-top:18px">Documents <span class="hint mono">GET /document/:doc</span></h3>
+    <div class="actions">
+      <a class="btn secondary sm" href="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/document/cert" target="_blank">📄 Certificate</a>
+      <a class="btn secondary sm" href="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/document/status_report" target="_blank">📄 Status report</a>
+      <a class="btn secondary sm" href="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/document/memart" target="_blank">📄 Memart</a>
+      <a class="btn secondary sm" href="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/document/proof_of_address" target="_blank">📄 Proof of address</a>
+    </div>
+
+    <div class="actions">
+      <form class="inline" method="post" action="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/resend?vendor_id={{.Vendor.ID}}">
+        <button type="submit" class="secondary sm">↻ Resend KYB link</button>
+      </form>
+      <form class="inline" method="post" action="/app/admin/kyb-verifications/{{.Vendor.KYBVerificationID.String}}/cancel?vendor_id={{.Vendor.ID}}" data-confirm="Cancel this KYB verification?">
+        <button type="submit" class="danger sm">✕ Cancel KYB verification</button>
+      </form>
+    </div>
+    {{else}}
+    <div class="empty-state"><span class="icon">⏳</span>No hosted KYB verification started yet.</div>
+    {{end}}
+  </div>
+
+  <div class="section-title"><h3>Directors</h3><span class="rule"></span></div>
+  {{if .Directors}}
+  {{range .Directors}}
+  <div class="card">
+    <h3>{{if .FullName.Valid}}{{.FullName.String}}{{end}} <span class="hint">bulk-identify: {{if .BulkIdentifyStatus.Valid}}{{.BulkIdentifyStatus.String}}{{else}}—{{end}}</span></h3>
+    {{if .Live}}
+    <div class="card-row"><span class="hint">Verification ID</span><span class="mono">{{.Live.ID}}</span></div>
+    <div class="card-row"><span class="hint">Status</span><span>{{.Live.Status}}</span></div>
+    <div class="card-row"><span class="hint">Outcome</span>{{template "badge" .Live.Outcome}}</div>
+    <div class="card-row"><span class="hint">Score / Face score</span><span>{{.Live.Score}} / {{.Live.FaceScore}}</span></div>
+    <div class="actions">
+      <a class="btn secondary sm" href="/app/admin/verifications/{{.Live.ID}}/selfie" target="_blank">🖼 View selfie</a>
+      <form class="inline" method="post" action="/app/admin/verifications/{{.Live.ID}}/resend?vendor_id={{$.Vendor.ID}}">
+        <button type="submit" class="secondary sm">↻ Resend KYC link</button>
+      </form>
+      <form class="inline" method="post" action="/app/admin/verifications/{{.Live.ID}}/cancel?vendor_id={{$.Vendor.ID}}" data-confirm="Cancel this KYC verification?">
+        <button type="submit" class="danger sm">✕ Cancel</button>
+      </form>
+    </div>
+    {{else}}
+    <div class="empty-state"><span class="icon">⏳</span>No hosted KYC verification started yet.</div>
+    {{end}}
+  </div>
+  {{end}}
+  {{else}}
+  <div class="card"><div class="empty-state"><span class="icon">👥</span>No directors on file.</div></div>
+  {{end}}
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

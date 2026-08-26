@@ -1,0 +1,111 @@
+{{define "employee_apply.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>WorkForce — Remote Candidate &amp; Payroll KYC</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  {{template "stepper" .Stepper}}
+
+  <div class="page-head">
+    <span class="eyebrow">🪪 WorkForce &middot; Enterprise HR &amp; Payroll Governance</span>
+    <h1>Candidate Screening &amp; Liveness</h1>
+    <p>
+      Prevent remote hiring fraud and proxy interview schemes. Instant registry check for on-site hires, or hosted biometric selfie + liveness link for remote staff before payroll activation.
+    </p>
+  </div>
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Candidate Presets (Click to Test)</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#full_name":"James Bond","#role":"Senior Financial Controller","#id_type":"bvn","#id_number":"77777777777","#date_of_birth":"1975-01-01"}'>
+        ✓ On-Site Executive (Instant Lookup) &middot; <span class="mono">77777777777</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#full_name":"Jane Doe","#role":"Remote Staff Engineer","#check_method":"hosted_link","#email":"jane.doe@example.com"}'>
+        📷 Remote Candidate (Hosted Selfie Link)
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#full_name":"Ghost Candidate","#role":"Junior Analyst","#id_type":"bvn","#id_number":"55555555555","#date_of_birth":"1998-02-14"}'>
+        ✕ Ghost Identity &middot; <span class="mono">55555555555</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form id="candidateForm" method="post" action="/app/employees/apply">
+      <div class="form-grid">
+        <div>
+          <label for="full_name">Candidate Legal Name</label>
+          <input id="full_name" name="full_name" value="James Bond" placeholder="e.g. James Bond" required>
+        </div>
+        <div>
+          <label for="role">Corporate Position / Role</label>
+          <input id="role" name="role" value="Lead Software Architect" required>
+        </div>
+      </div>
+
+      <div>
+        <label for="check_method">Verification Method</label>
+        <select id="check_method" name="check_method" onchange="
+          document.getElementById('dashboard-fields').style.display = this.value === 'dashboard_lookup' ? 'block' : 'none';
+          document.getElementById('hosted-fields').style.display = this.value === 'hosted_link' ? 'block' : 'none';
+        ">
+          <option value="dashboard_lookup">Instant Registry Lookup (BVN/NIN + Name Match)</option>
+          <option value="hosted_link">Hosted Link with Biometric Selfie &amp; Liveness (Remote Candidate)</option>
+        </select>
+      </div>
+
+      <div id="dashboard-fields" style="margin-top:12px;">
+        <div class="form-grid">
+          <div>
+            <label for="id_type">Verification Rail</label>
+            <select id="id_type" name="id_type">
+              <option value="bvn">BVN (Bank Verification Number)</option>
+              <option value="nin">NIN (National Identity Number)</option>
+            </select>
+          </div>
+          <div>
+            <label for="id_number">National ID Number</label>
+            <input id="id_number" name="id_number" value="77777777777">
+          </div>
+        </div>
+
+        <div>
+          <label for="date_of_birth">Date of Birth</label>
+          <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01">
+        </div>
+      </div>
+
+      <div id="hosted-fields" style="display:none; margin-top:12px;">
+        <label for="email">Candidate Email <span class="hint">(For secure one-time KYC invite)</span></label>
+        <input id="email" name="email" type="email" value="james.bond@example.com">
+      </div>
+
+      <div class="decision-box" style="margin-top:18px;">
+        <div class="decision-header">
+          <span>🔒 WorkForce Payroll Gatekeeper</span>
+          <span style="font-size:.75rem; color:var(--text-faint);">Direct Deposit Protection</span>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-item">
+            <span class="decision-item-title">Monthly Payroll</span>
+            <span class="decision-item-value">₦850,000 / month</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Anti-Ghost Check</span>
+            <span class="decision-item-value">Real-Time Registry Lock</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Remote Anti-Spoofing</span>
+            <span class="decision-item-value">3D Biometric Liveness</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Execute Candidate Verification →</button>
+        <a href="/app/employees" class="btn secondary">View HR Dashboard</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

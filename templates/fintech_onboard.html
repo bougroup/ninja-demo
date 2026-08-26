@@ -1,0 +1,89 @@
+{{define "fintech_onboard.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexPay Neobank — Tiered Customer Onboarding</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  <div class="page-head">
+    <span class="eyebrow">💳 ApexPay Neobank &middot; Account Tiering</span>
+    <h1>Customer Onboarding &amp; Fuzzy Match</h1>
+    <p>
+      Ninja returns granular per-field confidence scores rather than a blunt binary reject. This enables automatic account tiering and unlocks higher daily limits without dropping legitimate users with common registry typos.
+    </p>
+  </div>
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Scenario Presets (Fuzzy Confidence Testing)</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#full_name":"James Bond","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777"}'>
+        ✓ Exact Match (100% Score) &middot; <span class="mono">Tier 3 (₦5M/day)</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#full_name":"Jame Bondz","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777"}'>
+        ≈ Typo / Spelling Variant (82% Score) &middot; <span class="mono">Tier 2 (₦500k/day)</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#full_name":"James","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777"}'>
+        ⚠️ Partial First Name Only (60% Score) &middot; <span class="mono">Review</span>
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#full_name":"Totally Wrong Name","#date_of_birth":"1995-01-01","#id_type":"bvn","#id_number":"55555555555"}'>
+        ✕ Total Mismatch &middot; <span class="mono">Reject</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form id="onboardForm" method="post" action="/app/fintech/onboard">
+      <div class="form-grid">
+        <div>
+          <label for="full_name">Customer Full Name <span class="hint">(As entered)</span></label>
+          <input id="full_name" name="full_name" value="James Bond" placeholder="e.g. James Bond" required>
+        </div>
+        <div>
+          <label for="date_of_birth">Date of Birth</label>
+          <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01" required>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="id_type">Verification Rail</label>
+          <select id="id_type" name="id_type">
+            <option value="bvn">BVN (Bank Verification Number)</option>
+            <option value="nin">NIN (National Identity Number)</option>
+          </select>
+        </div>
+        <div>
+          <label for="id_number">National ID Number</label>
+          <input id="id_number" name="id_number" value="77777777777" placeholder="11 digits" required>
+        </div>
+      </div>
+
+      <div class="decision-box" style="margin-top:18px;">
+        <div class="decision-header">
+          <span>📊 Neobank Daily Transfer Tier Thresholds</span>
+          <span style="font-size:.75rem; color:var(--text-faint);">CBN Regulatory Limits</span>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-item">
+            <span class="decision-item-title">Tier 1 Basic</span>
+            <span class="decision-item-value">₦50,000 / day (Selfie Only)</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Tier 2 Standard</span>
+            <span class="decision-item-value">₦500,000 / day (Score &ge; 80%)</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Tier 3 Premium</span>
+            <span class="decision-item-value">₦5,000,000 / day (Score &ge; 95%)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Evaluate Identity Score &amp; Tier →</button>
+        <a href="/app/fintech" class="btn secondary">View Account Ledger</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

@@ -1,0 +1,91 @@
+{{define "agent_recruit.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexAgent — Field Agent POS Recruitment</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container narrow">
+  <div class="page-head">
+    <span class="eyebrow">🛰️ ApexAgent &middot; POS Agency Banking</span>
+    <h1>Field Agent Recruitment &amp; Terminal Binding</h1>
+    <p>
+      Every recruited POS agent receives a ₦2,000,000 operating cash float. Real-time verification matches the agent via <code>POST /api/identity/identify</code> and flags "one BVN behind multiple terminals" fraud rings before hardware provisioning.
+    </p>
+  </div>
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Scenario Presets (Agency Banking &amp; Fraud Rings)</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#full_name":"James Bond","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777","#terminal_id":"POS-LAG-101"}'>
+        ✓ Verified Agent &middot; <span class="mono">Terminal POS-LAG-101</span>
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#full_name":"James Bond","#date_of_birth":"1975-01-01","#id_type":"bvn","#id_number":"77777777777","#terminal_id":"POS-IBD-202"}'>
+        ⚠️ Duplicate Terminal Test &middot; <span class="mono">Same BVN, 2nd POS</span>
+      </button>
+      <button type="button" class="preset-chip danger" data-fill='{"#full_name":"Fake Operator","#date_of_birth":"1992-04-12","#id_type":"bvn","#id_number":"55555555555","#terminal_id":"POS-ABJ-303"}'>
+        ✕ Unverified ID &middot; <span class="mono">Reject</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form id="recruitForm" method="post" action="/app/agents/recruit">
+      <div class="form-grid">
+        <div>
+          <label for="full_name">Agent Full Name</label>
+          <input id="full_name" name="full_name" value="James Bond" placeholder="e.g. James Bond" required>
+        </div>
+        <div>
+          <label for="date_of_birth">Date of Birth</label>
+          <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="id_type">Verification Rail</label>
+          <select id="id_type" name="id_type">
+            <option value="bvn">BVN (Bank Verification Number)</option>
+            <option value="nin">NIN (National Identity Number)</option>
+          </select>
+        </div>
+        <div>
+          <label for="id_number">National ID Number</label>
+          <input id="id_number" name="id_number" value="77777777777" placeholder="11 digits" required>
+        </div>
+      </div>
+
+      <div>
+        <label for="terminal_id">POS Terminal Hardware ID</label>
+        <input id="terminal_id" name="terminal_id" value="POS-LAG-101" placeholder="e.g. POS-LAG-101" required>
+      </div>
+
+      <div class="decision-box" style="margin-top:18px;">
+        <div class="decision-header">
+          <span>🛰️ ApexAgent Hardware Binding Guardrails</span>
+          <span style="font-size:.75rem; color:var(--text-faint);">POS Fleet Security</span>
+        </div>
+        <div class="decision-grid">
+          <div class="decision-item">
+            <span class="decision-item-title">Operating Float</span>
+            <span class="decision-item-value">₦2,000,000 / Active Terminal</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Syndicate Prevention</span>
+            <span class="decision-item-value">Multi-POS BVN Flagging</span>
+          </div>
+          <div class="decision-item">
+            <span class="decision-item-title">Dormancy Policy</span>
+            <span class="decision-item-value">Re-KYC on Reactivation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Verify &amp; Provision POS Terminal →</button>
+        <a href="/app/agents" class="btn secondary">View Fleet Dashboard</a>
+      </div>
+    </form>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

@@ -1,0 +1,157 @@
+{{define "international_console.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>ApexGlobal FX Desk — International Verification Console</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">🌍 ApexGlobal &middot; Cross-Border FX &amp; Treasury</span>
+    <h1>Global Remittance &amp; Batch Counterparty Desk</h1>
+    <p>
+      Execute high-volume cross-border settlements with zero Nigerian entity overhead. Batch verify up to 25 beneficiary counterparties in a single HTTP call (<code>POST /api/identity/bulk-identify</code>) with latency tracking and complete audit trails.
+    </p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Counterparties Screened</span>
+      <span class="kpi-value">{{if .Results}}{{len .Results.Entries}}{{else}}0{{end}}</span>
+      <span class="kpi-sub">Bulk Batch Execution</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Direct API Latency</span>
+      <span class="kpi-value">{{if .DurationMs}}{{.DurationMs}}ms{{else}}&lt; 50ms{{end}}</span>
+      <span class="kpi-sub">Real-Time Registry Query</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Zero Entity Overhead</span>
+      <span class="kpi-value">100%</span>
+      <span class="kpi-sub">Direct Sandbox Integration</span>
+    </div>
+  </div>
+
+  {{if .Error}}<div class="card" style="border-color:var(--red-border);background:var(--red-bg);color:#fecaca;font-weight:600;">{{.Error}}</div>{{end}}
+
+  <div class="preset-bar">
+    <div class="preset-bar-title">⚡ Instant Cross-Border Scenario Presets</div>
+    <div class="preset-chips">
+      <button type="button" class="preset-chip success" data-fill='{"#check_type":"bulk","#id_type":"nin","#id_numbers":"77777777777,66666666666,55555555555,00000000000"}'>
+        ⚡ 4-Counterparty Batch FX Wire (Mix of Pass, AML, Missing, Error)
+      </button>
+      <button type="button" class="preset-chip success" data-fill='{"#check_type":"single","#mode":"verify","#id_type":"bvn","#id_number":"77777777777","#first_name":"James","#last_name":"Bond","#date_of_birth":"1975-01-01"}'>
+        ✓ Single Beneficiary Match &middot; James Bond
+      </button>
+      <button type="button" class="preset-chip warning" data-fill='{"#check_type":"single","#mode":"lookup","#id_type":"nin","#id_number":"66666666666"}'>
+        ⚠️ Sanctions Watchlist Screening &middot; 66666666666
+      </button>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <form method="post" action="/app/international/console">
+      <div class="form-grid">
+        <div>
+          <label for="check_type">Operation Rail</label>
+          <select id="check_type" name="check_type" onchange="document.getElementById('bulk-fields').style.display=this.value=='bulk'?'block':'none';document.getElementById('single-fields').style.display=this.value=='bulk'?'none':'block';">
+            <option value="single">Single Recipient (Lookup / Verify)</option>
+            <option value="bulk">Batch Bulk Remittance (Up to 25 Counterparties)</option>
+          </select>
+        </div>
+        <div>
+          <label for="id_type">Target National ID Type</label>
+          <select id="id_type" name="id_type">
+            {{range .IDTypes}}<option value="{{.}}">{{. | upper}}</option>{{end}}
+          </select>
+        </div>
+      </div>
+
+      <div id="single-fields" style="margin-top:12px;">
+        <div class="form-grid">
+          <div>
+            <label for="mode">Verification Mode</label>
+            <select id="mode" name="mode">
+              <option value="lookup">lookup — Full registry record &amp; demographics</option>
+              <option value="verify">verify — Match confidence against name &amp; DOB</option>
+            </select>
+          </div>
+          <div>
+            <label for="id_number">National ID Number</label>
+            <input id="id_number" name="id_number" value="77777777777">
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-top:10px;">
+          <div>
+            <label for="first_name">Beneficiary First Name</label>
+            <input id="first_name" name="first_name" value="James">
+          </div>
+          <div>
+            <label for="last_name">Beneficiary Last Name</label>
+            <input id="last_name" name="last_name" value="Bond">
+          </div>
+        </div>
+
+        <div>
+          <label for="date_of_birth">Beneficiary Date of Birth</label>
+          <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01">
+        </div>
+      </div>
+
+      <div id="bulk-fields" style="display:none; margin-top:12px;">
+        <label for="id_numbers">Batch Recipient ID Numbers <span class="hint">(Comma-separated, up to 25 per request)</span></label>
+        <input id="id_numbers" name="id_numbers" value="77777777777,66666666666,55555555555,00000000000">
+      </div>
+
+      <div class="actions" style="margin-top:20px;">
+        <button type="submit" class="primary">Execute Real-Time API Call →</button>
+      </div>
+    </form>
+  </div>
+
+  {{if .Result}}
+  <div class="card highlight" style="border-color:#38bdf8;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h2 style="margin:0; color:#38bdf8;">⚡ Raw Ninja Sandbox Response Payload</h2>
+      <span class="badge pass">200 OK</span>
+    </div>
+    <pre class="mono" style="background:#0b0f19; color:#38bdf8; padding:16px; border-radius:8px; overflow-x:auto; border:1px solid var(--border);">{{.Result}}</pre>
+  </div>
+  {{end}}
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h2 style="margin:0;">Global Treasury Audit Log</h2>
+      <span class="hint">Persisted Operator Trail</span>
+    </div>
+    {{if .Checks}}
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Reference</th>
+          <th>Operator</th>
+          <th>ID Rail</th>
+          <th>ID Number</th>
+          <th>Mode</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Checks}}
+        <tr>
+          <td class="mono" style="color:var(--text-faint);">{{.CreatedAt}}</td>
+          <td class="mono">{{if .Reference.Valid}}{{.Reference.String | slice 0 12}}...{{end}}</td>
+          <td>{{.Operator}}</td>
+          <td><span class="badge {{if eq .IDType "bvn"}}pass{{else}}pending{{end}}">{{.IDType | upper}}</span></td>
+          <td class="mono">{{.IDNumber}}</td>
+          <td>{{.Mode}}</td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">🌍</span>No checks run yet.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

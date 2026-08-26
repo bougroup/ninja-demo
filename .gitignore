@@ -1,0 +1,10 @@
+.env
+data.db
+*.log
+server
+server.exe
+ninja-demo-server
+ninja-demo-server.exe
+web/public/
+web/src/index.ts
+

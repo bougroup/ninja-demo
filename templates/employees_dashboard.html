@@ -1,0 +1,80 @@
+{{define "employees_dashboard.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>WorkForce — Employee &amp; Payroll Governance</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
+    <div>
+      <span class="eyebrow">🪪 WorkForce &middot; HR &amp; Payroll Security</span>
+      <h1>Candidate Screening &amp; Direct Deposit Gate</h1>
+      <p>
+        Confirm identity, anti-spoofing liveness, and national registry records before activating candidates on automated monthly payroll.
+      </p>
+    </div>
+    <div>
+      <a href="/app/employees/apply" class="btn primary">+ Screen New Candidate</a>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <span class="kpi-label">Active Staff on Payroll</span>
+      <span class="kpi-value">{{len .Candidates}}</span>
+      <span class="kpi-sub"><span class="badge pass">Enrolled</span> Direct Deposit</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Monthly Payroll Gate</span>
+      <span class="kpi-value">₦850,000 / mo</span>
+      <span class="kpi-sub">Per Verified Candidate</span>
+    </div>
+    <div class="kpi-card">
+      <span class="kpi-label">Anti-Ghost Employee Defense</span>
+      <span class="kpi-value">Active</span>
+      <span class="kpi-sub">3D Biometric Liveness Gate</span>
+    </div>
+  </div>
+
+  <div class="card highlight">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="margin:0;">Candidate Verification &amp; Payroll Authorization</h2>
+      <span class="hint">Registry Lookup &middot; Remote Liveness</span>
+    </div>
+    {{if .Candidates}}
+    <table>
+      <thead>
+        <tr>
+          <th>Candidate Name</th>
+          <th>Designated Role</th>
+          <th>Verification Method</th>
+          <th>Identity Status</th>
+          <th>Monthly Payroll</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{range .Candidates}}
+        <tr>
+          <td><strong>{{.FullName}}</strong></td>
+          <td>{{if .Role.Valid}}{{.Role.String}}{{else}}—{{end}}</td>
+          <td><span class="hint">{{.CheckMethod}}</span></td>
+          <td>{{template "badge" .Status}}</td>
+          <td>
+            {{if eq .PayrollStatus "active"}}
+              <span class="badge pass">₦850,000/mo Active</span>
+            {{else}}
+              <span class="badge pending">Locked</span>
+            {{end}}
+          </td>
+          <td><a class="btn secondary sm" href="/app/employees/{{.ID}}">Audit &amp; Payroll →</a></td>
+        </tr>
+        {{end}}
+      </tbody>
+    </table>
+    {{else}}
+    <div class="empty-state"><span class="icon">🪪</span>No candidates screened yet. <a href="/app/employees/apply">Check a candidate</a>.</div>
+    {{end}}
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}

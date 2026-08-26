@@ -1,0 +1,86 @@
+{{define "sandbox_data.html"}}
+<!doctype html><html><head>{{template "head" .}}<title>Sandbox Test Data — Ninja Demo</title></head>
+<body data-flash="{{.Flash}}">
+{{template "nav" .}}
+<div class="container">
+  <div class="page-head">
+    <span class="eyebrow">🧪 Reference</span>
+    <h1>Sandbox Test Data</h1>
+    <p>Ninja's sandbox answers from a fixed table of test numbers — it never touches a live registry, so these work identically for <strong>every idType</strong> (NIN, BVN — NDL lookups are temporarily paused platform-wide) and for both <code>identify</code> and <code>bulk-identify</code>. Every "use this" chip on the forms in this demo pulls from this exact table, so you never have to guess a value.</p>
+  </div>
+
+  <div class="card">
+    <h2>Identity numbers (NIN / BVN)</h2>
+    <table>
+      <tr><th>Value</th><th>Outcome</th><th>Name / DOB returned</th><th>Notes</th></tr>
+      <tr>
+        <td class="mono">77777777777</td>
+        <td>{{template "badge" "pass"}}</td>
+        <td>James Bond &middot; 1975-01-01</td>
+        <td>Clean match — use for a "verify succeeds" demo</td>
+      </tr>
+      <tr>
+        <td class="mono">66666666666</td>
+        <td>{{template "badge" "pass"}}</td>
+        <td>Alex Watchlist &middot; 1975-01-01</td>
+        <td>Found, but triggers an AML/sanctions screening hit</td>
+      </tr>
+      <tr>
+        <td class="mono">55555555555</td>
+        <td>{{template "badge" "fail"}}</td>
+        <td>—</td>
+        <td>Not found — use for a "no match" demo</td>
+      </tr>
+      <tr>
+        <td class="mono">00000000000</td>
+        <td>{{template "badge" "pending"}}</td>
+        <td>—</td>
+        <td>Simulates an upstream 500 — use to demo error handling</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Company / RC numbers</h2>
+    <table>
+      <tr><th>Value</th><th>Outcome</th><th>Company returned</th><th>Notes</th></tr>
+      <tr>
+        <td class="mono">0000000</td>
+        <td>{{template "badge" "pass"}}</td>
+        <td>NINJA DEMO COMPANY LIMITED</td>
+        <td>Found with one director — use for Vendor/Aggregator apply</td>
+      </tr>
+      <tr>
+        <td class="mono">6666666</td>
+        <td>{{template "badge" "pass"}}</td>
+        <td>NINJA WATCHLIST HOLDINGS LIMITED</td>
+        <td>Found, triggers an AML match in the KYB flow</td>
+      </tr>
+      <tr>
+        <td class="mono">5555555</td>
+        <td>{{template "badge" "fail"}}</td>
+        <td>—</td>
+        <td>Not found</td>
+      </tr>
+      <tr>
+        <td class="mono">1111111</td>
+        <td>{{template "badge" "pending"}}</td>
+        <td>—</td>
+        <td>Simulates an upstream 500</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Where to use these</h2>
+    <table>
+      <tr><th>Scenario</th><th>Field</th></tr>
+      <tr><td>Gaming, Fintechs, Agent Network, Employee (dashboard lookup)</td><td>Full name "James Bond", DOB 1975-01-01, ID number 77777777777</td></tr>
+      <tr><td>Vendor Onboarding, Agent aggregator registration</td><td>RC number 0000000</td></tr>
+      <tr><td>International Companies console, Identity Spot-Check</td><td>Any of the four ID numbers above, either mode</td></tr>
+    </table>
+  </div>
+</div>
+{{template "footer" .}}
+</body></html>
+{{end}}
