@@ -8,39 +8,30 @@
 {{define "nav"}}
 <aside class="app-sidebar">
   <div class="sidebar-brand">
-    <a href="/" class="brand-link">
+    <a href="/app/gaming/signup" class="brand-link">
       <img class="logo-img" src="/assets/img/ninja_logo_white.png" alt="Ninja">
-      <span class="brand-badge">Fintech Suite</span>
+      <span class="brand-badge">ApexBet</span>
     </a>
   </div>
 
   <div class="sidebar-nav">
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Solutions</div>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/gaming"}} active{{end}}" href="/app/gaming">
-        <span class="sidebar-icon">🎰</span> Sportsbook
+      <div class="sidebar-section-title">ApexBet Product Flow</div>
+      <a class="sidebar-link{{if hasPrefix .Path "/app/gaming/signup"}} active{{end}}" href="/app/gaming/signup">
+        <span class="sidebar-icon">📝</span> 1. Signup &amp; 18+ Age Gate
       </a>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/fintech"}} active{{end}}" href="/app/fintech">
-        <span class="sidebar-icon">💳</span> Neobank Tiers
+      <a class="sidebar-link{{if and (hasPrefix .Path "/app/gaming") (not (hasPrefix .Path "/app/gaming/signup"))}} active{{end}}" href="/app/gaming">
+        <span class="sidebar-icon">🎰</span> 2. Sportsbook &amp; Payouts
       </a>
       <a class="sidebar-link{{if hasPrefix .Path "/app/vendor"}} active{{end}}" href="/app/vendor/apply">
-        <span class="sidebar-icon">🏢</span> B2B Escrow
-      </a>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/agents"}} active{{end}}" href="/app/agents">
-        <span class="sidebar-icon">🛰️</span> POS Agency Fleet
-      </a>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/employees"}} active{{end}}" href="/app/employees">
-        <span class="sidebar-icon">🪪</span> HR &amp; Payroll
-      </a>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/international"}} active{{end}}" href="/app/international/console">
-        <span class="sidebar-icon">🌍</span> FX Treasury Desk
+        <span class="sidebar-icon">🏢</span> 3. Betting Shop KYB
       </a>
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Developer &amp; Ops</div>
+      <div class="sidebar-section-title">Compliance &amp; API Ops</div>
       <a class="sidebar-link{{if and (hasPrefix .Path "/app/admin") (not (hasPrefix .Path "/app/admin/identity-check")) (not (hasPrefix .Path "/app/admin/webhooks"))}} active{{end}}" href="/app/admin">
-        <span class="sidebar-icon">📋</span> Admin Cockpit
+        <span class="sidebar-icon">📋</span> Audit Cockpit
       </a>
       <a class="sidebar-link{{if hasPrefix .Path "/app/admin/identity-check"}} active{{end}}" href="/app/admin/identity-check">
         <span class="sidebar-icon">🔍</span> Identity Spot-Check
@@ -50,9 +41,6 @@
       </a>
       <a class="sidebar-link{{if hasPrefix .Path "/app/sandbox-data"}} active{{end}}" href="/app/sandbox-data">
         <span class="sidebar-icon">🧪</span> Test Fixtures
-      </a>
-      <a class="sidebar-link{{if hasPrefix .Path "/app/guide"}} active{{end}}" href="/app/guide">
-        <span class="sidebar-icon">📖</span> System Guide
       </a>
     </div>
   </div>

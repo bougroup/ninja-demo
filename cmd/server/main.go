@@ -47,8 +47,15 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Static landing page built by HAM (ham build -> web/public).
-	mux.Handle("/", http.FileServer(http.Dir("web/public")))
+	// Static assets and files
+	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("web/public/assets"))))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/" {
+			http.Redirect(w, r, "/app/gaming/signup", http.StatusSeeOther)
+			return
+		}
+		http.FileServer(http.Dir("web/public")).ServeHTTP(w, r)
+	})
 
 	// Global system controls & Activity Stream
 	mux.HandleFunc("POST /app/toggle-mock-mode", env.ToggleMockMode)
