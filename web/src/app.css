@@ -874,6 +874,132 @@ tbody tr:hover {
   font-size: 0.7rem;
 }
 
+/* ---------- Flash Toast Notifications & Popups ---------- */
+
+.flash-wrap {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+  width: calc(100vw - 48px);
+  pointer-events: none;
+}
+
+.flash {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.2s ease;
+}
+
+.flash.err {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.22), rgba(15, 23, 42, 0.96));
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(239, 68, 68, 0.25);
+}
+
+.flash.ok {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(15, 23, 42, 0.96));
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 24px rgba(16, 185, 129, 0.25);
+}
+
+.flash-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+}
+
+.flash.err .flash-icon {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.flash.ok .flash-icon {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.flash-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.flash-title {
+  display: block;
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+  color: #ffffff;
+}
+
+.flash.err .flash-title {
+  color: #fca5a5;
+}
+
+.flash.ok .flash-title {
+  color: #6ee7b7;
+}
+
+.flash-message {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.flash-close {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  margin-left: 6px;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.flash-close:hover {
+  color: #ffffff;
+}
+
+.flash-exit {
+  opacity: 0;
+  transform: translateX(30px) scale(0.96);
+  pointer-events: none;
+}
+
+@keyframes slideInToast {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* ---------- Footer ---------- */
 
 .footer {

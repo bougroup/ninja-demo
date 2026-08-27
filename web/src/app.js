@@ -1,27 +1,62 @@
-﻿// Progressive enhancement & real-time telemetry for Ninja Fintech Suite
+// Progressive enhancement & real-time telemetry for Ninja Fintech Suite
 (function () {
   "use strict";
 
   function showToast(text, kind) {
     if (!text) return;
+    var isErr = /fail|error|invalid|insufficient|denied|unauthorized|cancel|reject|mismatch|unavailable|blocked|alert|hold|underage/i.test(text);
     if (!kind) {
-      var errWords = /fail|error|invalid|insufficient|denied|unauthorized|cancel|reject|mismatch|unavailable|blocked|alert|hold/i;
-      kind = errWords.test(text) ? "err" : "ok";
+      kind = isErr ? "err" : "ok";
     }
-    var wrap = document.querySelector(".flash-wrap") || document.body.appendChild(Object.assign(document.createElement("div"), { className: "flash-wrap" }));
+    var wrap = document.querySelector(".flash-wrap");
+    if (!wrap) {
+      wrap = document.createElement("div");
+      wrap.className = "flash-wrap";
+      document.body.appendChild(wrap);
+    }
+
     var el = document.createElement("div");
     el.className = "flash " + kind;
-    var msg = document.createElement("span");
+    el.setAttribute("role", "alert");
+
+    var iconBox = document.createElement("div");
+    iconBox.className = "flash-icon";
+    iconBox.innerHTML = kind === "err" ? "⛔" : "✓";
+
+    var content = document.createElement("div");
+    content.className = "flash-content";
+
+    var title = document.createElement("strong");
+    title.className = "flash-title";
+    title.textContent = kind === "err" ? "Compliance Gate: Action Blocked" : "Compliance Verification Cleared";
+
+    var msg = document.createElement("div");
+    msg.className = "flash-message";
     msg.textContent = text;
+
+    content.appendChild(title);
+    content.appendChild(msg);
+
     var close = document.createElement("button");
     close.className = "flash-close";
-    close.setAttribute("aria-label", "Dismiss");
-    close.textContent = "✕";
-    close.onclick = function () { el.remove(); };
-    el.appendChild(msg);
+    close.setAttribute("aria-label", "Dismiss notification");
+    close.innerHTML = "&times;";
+    close.onclick = function () {
+      el.classList.add("flash-exit");
+      setTimeout(function () { el.remove(); }, 200);
+    };
+
+    el.appendChild(iconBox);
+    el.appendChild(content);
     el.appendChild(close);
     wrap.appendChild(el);
-    setTimeout(function () { el.remove(); }, 7000);
+
+    setTimeout(function () {
+      if (el.parentNode) {
+        el.classList.add("flash-exit");
+        setTimeout(function () { el.remove(); }, 250);
+      }
+    }, 7000);
   }
 
   function initFlash() {

@@ -112,7 +112,7 @@ func (e *Env) GamingDashboard(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	render(w, r, "gaming_dashboard.html", map[string]any{
+	e.render(w, r, "gaming_dashboard.html", map[string]any{
 		"Players":       players,
 		"PlayerPayouts": playerPayouts,
 		"PlayerBets":    playerBets,
