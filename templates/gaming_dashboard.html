@@ -3,6 +3,26 @@
 <body data-flash="{{.Flash}}">
 {{template "nav" .}}
 <div class="container">
+
+  <!-- Interactive Story Stepper -->
+  <div class="card" style="padding:14px 18px; margin-bottom:24px; background:linear-gradient(180deg, rgba(56, 189, 248, 0.08), var(--bg-surface)); border:1px solid rgba(56, 189, 248, 0.25);">
+    <div style="font-size:.74rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:#38bdf8; margin-bottom:8px;">
+      📖 ApexBet Interactive Story &middot; Live Sportsbook &amp; Payout Protection
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+      <div style="font-size:1.05rem; font-weight:700; color:#fff;">
+        Live Wagers, High-Roller Risk Checks &amp; Payout Validation
+      </div>
+      <div style="display:flex; gap:6px;">
+        <span class="badge pass">API: POST /api/identity/identify</span>
+        <span class="badge pass">Webhooks: HMAC SHA-256</span>
+      </div>
+    </div>
+    <p style="margin:6px 0 0 0; font-size:.84rem; color:var(--text-secondary); line-height:1.5;">
+      Test live sportsbook betting, underage lockout, and payout authorization. When a player wins and requests a withdrawal, Ninja re-verifies their national identity in real-time before money leaves the platform.
+    </p>
+  </div>
+
   <div class="page-head" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px;">
     <div>
       <span class="eyebrow">🎰 ApexBet Sportsbook &middot; Live Operations</span>
@@ -16,6 +36,7 @@
     </div>
   </div>
 
+  <!-- KPI Grid -->
   <div class="kpi-grid">
     <div class="kpi-card">
       <span class="kpi-label">Active Player Accounts</span>
@@ -34,9 +55,76 @@
     </div>
   </div>
 
+  <!-- Live Sportsbook Betting Board -->
+  <div class="card" style="margin-bottom:28px; border:1px solid rgba(16, 185, 129, 0.3); background:linear-gradient(180deg, rgba(16, 185, 129, 0.05), var(--bg-surface));">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h3 style="margin:0; font-size:1.05rem; color:#fff; display:flex; align-items:center; gap:8px;">
+          <span>⚽ Live Sportsbook Match Fixtures (Premier League &amp; UCL)</span>
+          <span class="badge pass">Live Odds</span>
+        </h3>
+        <p style="margin:4px 0 0 0; font-size:.82rem; color:var(--text-secondary);">
+          Select odds to test live betting for verified accounts vs underage blocked accounts.
+        </p>
+      </div>
+      <span class="hint">Instant Payout Settlement</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+      <!-- Match 1 -->
+      <div style="background:var(--bg-surface-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+        <div style="font-size:.74rem; font-weight:700; text-transform:uppercase; color:#38bdf8; margin-bottom:6px;">
+          Premier League &middot; 78' Live
+        </div>
+        <div style="font-size:.95rem; font-weight:700; color:#fff; margin-bottom:10px;">
+          Arsenal <span style="color:var(--accent);">2 - 1</span> Chelsea
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Home</span>
+            <strong>1.85</strong>
+          </button>
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Draw</span>
+            <strong>3.40</strong>
+          </button>
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Away</span>
+            <strong>4.20</strong>
+          </button>
+        </div>
+      </div>
+
+      <!-- Match 2 -->
+      <div style="background:var(--bg-surface-subtle); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+        <div style="font-size:.74rem; font-weight:700; text-transform:uppercase; color:#38bdf8; margin-bottom:6px;">
+          La Liga &middot; 64' Live
+        </div>
+        <div style="font-size:.95rem; font-weight:700; color:#fff; margin-bottom:10px;">
+          Real Madrid <span style="color:var(--accent);">1 - 1</span> Barcelona
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Home</span>
+            <strong>2.10</strong>
+          </button>
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Draw</span>
+            <strong>3.60</strong>
+          </button>
+          <button type="button" class="btn secondary sm" style="text-align:center; padding:6px 2px;" onclick="document.querySelectorAll('form[action*=/bet] button').forEach(b => b.click())">
+            <span style="font-size:.7rem; display:block; color:var(--text-tertiary);">Away</span>
+            <strong>3.10</strong>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Players Console -->
   {{if .Players}}
   {{range .Players}}
-  <div class="card highlight">
+  <div class="card highlight" style="margin-bottom:20px;">
     <div class="card-row" style="border:none; padding-bottom:12px;">
       <div>
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px;">
@@ -158,12 +246,31 @@
   <div class="card">
     <div class="empty-state">
       <span class="icon">🎰</span>
-      <h3>No punter accounts active yet</h3>
+      <h3>No player accounts active yet</h3>
       <p>Test the underage gate, AML threshold, or self-exclusion controls with realistic presets.</p>
-      <a href="/app/gaming/signup" class="btn primary">+ Create First Punter Account</a>
+      <a href="/app/gaming/signup" class="btn primary">+ Create First Player Account</a>
     </div>
   </div>
   {{end}}
+
+  <!-- Educational API Deep-Dive Section for Payouts -->
+  <div class="card" style="margin-top:24px; border:1px solid var(--border); background:var(--bg-surface-subtle);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+      <h3 style="margin:0; font-size:.95rem; color:#fff; display:flex; align-items:center; gap:8px;">
+        <span>🎓 How The Payout Validation Gate Protects Capital</span>
+      </h3>
+      <span class="badge pass">Compliance Rail</span>
+    </div>
+
+    <div style="font-size:.82rem; color:var(--text-secondary); line-height:1.6; margin-bottom:14px;">
+      Before a withdrawal is approved, ApexBet re-executes a real-time <code>POST /api/identity/identify</code> check against the registered identity. If the recipient's bank account or age fails to verify, the withdrawal is automatically frozen before funds leave the company vault.
+    </div>
+
+    <div style="font-size:.8rem; color:var(--text-tertiary);">
+      💡 <strong>Key takeaway for your boss:</strong> This eliminates internal fraud, account takeovers, and unauthorized payouts to unverified third-party bank accounts.
+    </div>
+  </div>
+
 </div>
 {{template "footer" .}}
 </body></html>
