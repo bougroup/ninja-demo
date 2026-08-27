@@ -66,6 +66,7 @@
     </form>
   </div>
 </aside>
+<main class="app-main">
 {{end}}
 
 {{define "badge"}}{{if .}}<span class="badge {{badgeClass .}}">{{.}}</span>{{else}}<span class="badge pending">pending</span>{{end}}{{end}}
@@ -87,18 +88,18 @@
 {{if .RecentAPILogs}}
 <div class="activity-bar">
   <div class="activity-bar-header">
-    <span style="font-size:.78rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:var(--text-muted);">
+    <span style="font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-tertiary);">
       📡 Live Sandbox API Activity Log
     </span>
-    <span style="font-size:.74rem; color:var(--text-faint);">Latency Monitored &middot; Auto-Logged</span>
+    <span style="font-size:.72rem; color:var(--text-tertiary);">Latency Monitored &middot; Auto-Logged</span>
   </div>
   <div class="activity-list">
     {{range .RecentAPILogs}}
     <div class="activity-row">
-      <div>
+      <div style="display:flex; align-items:center; gap:8px;">
         <span class="activity-method">{{.Method}}</span>
-        <span style="color:#fff; margin-left:6px;">{{.Endpoint}}</span>
-        {{if .IsMock}}<span style="font-size:.65rem; padding:1px 5px; border-radius:4px; background:var(--amber-bg); color:#fbbf24; margin-left:6px;">SIMULATED</span>{{else}}<span style="font-size:.65rem; padding:1px 5px; border-radius:4px; background:var(--green-bg); color:#34d399; margin-left:6px;">LIVE SANDBOX</span>{{end}}
+        <span class="mono" style="color:#fff; font-size:.78rem;">{{.Endpoint}}</span>
+        {{if .IsMock}}<span style="font-size:.62rem; padding:1px 5px; border-radius:3px; background:var(--status-pending-bg); color:#fbbf24; border:1px solid var(--status-pending-border);">SIMULATED</span>{{else}}<span style="font-size:.62rem; padding:1px 5px; border-radius:3px; background:var(--status-pass-bg); color:#34d399; border:1px solid var(--status-pass-border);">LIVE SANDBOX</span>{{end}}
       </div>
       <div style="display:flex; align-items:center; gap:12px;">
         <span class="{{if eq .StatusCode 200}}activity-status-200{{else}}activity-status-err{{end}}">HTTP {{.StatusCode}}</span>
@@ -112,8 +113,9 @@
 {{end}}
 
 {{define "footer"}}
-{{template "activity_bar" .}}
-<div class="footer">
-  Fintech Business Showcase &middot; Powered by the <a href="https://ninja.ng/" target="_blank" rel="noopener">Ninja KYC/KYB Sandbox API</a>.
-</div>
+  {{template "activity_bar" .}}
+  <footer class="footer">
+    Fintech Business Showcase &middot; Powered by the <a href="https://ninja.ng/" target="_blank" rel="noopener">Ninja KYC/KYB Sandbox API</a>.
+  </footer>
+</main>
 {{end}}

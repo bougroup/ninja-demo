@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* Restrained Executive Palette */
@@ -253,12 +253,23 @@ code {
 
 /* ---------- Main Content Container ---------- */
 
-.container {
+.app-main {
   flex: 1;
   min-width: 0;
-  max-width: 1120px;
-  margin: 0;
-  padding: 32px 40px 80px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-color: var(--bg-root);
+}
+
+.container {
+  flex: 1;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 40px;
+  box-sizing: border-box;
 }
 
 .container.narrow {
@@ -801,25 +812,30 @@ tbody tr:hover {
 /* ---------- Activity Stream ---------- */
 
 .activity-bar {
-  background: var(--bg-surface-subtle);
-  border-top: 1px solid var(--border-strong);
-  padding: 14px 24px;
-  margin-top: 40px;
+  width: 100%;
+  max-width: 1180px;
+  margin: 10px auto 24px;
+  padding: 0 40px;
+  box-sizing: border-box;
 }
 
 .activity-bar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .activity-list {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   max-height: 180px;
   overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px;
 }
 
 .activity-row {
@@ -840,7 +856,7 @@ tbody tr:hover {
 
 .activity-method {
   font-weight: 700;
-  color: #e2e8f0;
+  color: var(--accent);
 }
 
 .activity-status-200 {
@@ -861,8 +877,9 @@ tbody tr:hover {
 /* ---------- Footer ---------- */
 
 .footer {
+  margin-top: auto;
   text-align: center;
-  padding: 20px;
+  padding: 24px 20px;
   color: var(--text-tertiary);
   font-size: 0.78rem;
   border-top: 1px solid var(--border);
