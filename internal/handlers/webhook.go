@@ -1,16 +1,40 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/bernardoko/ninja-demo/internal/db"
 	"github.com/bernardoko/ninja-demo/internal/ninja"
 	"github.com/google/uuid"
 )
+
+func forwardToWebhookSite(body []byte, event, deliveryID, signature string) {
+	webhookSiteURL := os.Getenv("WEBHOOK_SITE_URL")
+	if webhookSiteURL == "" {
+		webhookSiteURL = "https://webhook.site/be3933b6-2393-4566-b244-8886cf23c65d"
+	}
+	go func() {
+		req, err := http.NewRequest("POST", webhookSiteURL, bytes.NewReader(body))
+		if err != nil {
+			return
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("X-Ninja-Event", event)
+		req.Header.Set("X-Ninja-Delivery-Id", deliveryID)
+		req.Header.Set("X-Ninja-Signature", signature)
+		client := &http.Client{Timeout: 5 * time.Second}
+		resp, err := client.Do(req)
+		if err == nil {
+			_ = resp.Body.Close()
+		}
+	}()
+}
 
 // WebhookReceiver handles both "verification.completed" (hosted KYC —
 // vendor directors or employee candidates) and "kyb_verification.completed"
@@ -47,6 +71,8 @@ func (e *Env) WebhookReceiver(w http.ResponseWriter, r *http.Request) {
 	if err := db.InsertWebhookEvent(e.DB, eventID, event, deliveryID, string(body), signatureOK); err != nil {
 		log.Printf("insert webhook event: %v", err)
 	}
+
+	forwardToWebhookSite(body, event, deliveryID, signature)
 
 	if !signatureOK {
 		log.Printf("webhook %s: signature verification failed, rejecting", eventID)
