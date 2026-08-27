@@ -8,7 +8,7 @@
       <span class="eyebrow">🛰️ ApexAgent &middot; POS Fleet Governance</span>
       <h1>Agency Banking &amp; Float Security</h1>
       <p>
-        Hardware terminal fleet governance and multi-terminal syndicate monitoring. Enforces a strict <strong>1-BVN to 1-Active Float (₦2,000,000)</strong> constraint across field POS hardware units, preventing aggregator fraud rings and automated re-KYC before restoring dormant floats.
+        Manage field POS terminals and protect cash floats (₦2,000,000 per unit). Enforces a strict <strong>1 BVN = 1 Active Float</strong> rule to stop agent fraud rings, and freezes inactive terminals until re-verified.
       </p>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -20,19 +20,19 @@
   <!-- KPI Grid -->
   <div class="kpi-grid">
     <div class="kpi-card">
-      <span class="kpi-label">Active POS Hardware Fleet</span>
+      <span class="kpi-label">Active POS Terminals</span>
       <span class="kpi-value">{{len .Agents}}</span>
       <span class="kpi-sub"><span class="badge pass">Online</span> Hardware Deployed</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Total Cash Float Deployed</span>
+      <span class="kpi-label">Total Float Deployed</span>
       <span class="kpi-value">{{formatKobo (mul (len .Agents) 200000000)}}</span>
-      <span class="kpi-sub">₦2,000,000 Float / Hardware Unit</span>
+      <span class="kpi-sub">₦2,000,000 Float / Unit</span>
     </div>
     <div class="kpi-card">
-      <span class="kpi-label">Syndicate Fraud Alarms</span>
+      <span class="kpi-label">Duplicate BVN Flags</span>
       <span class="kpi-value">{{len .DupesById}} Flags</span>
-      <span class="kpi-sub">Multi-Terminal BVN Collisions</span>
+      <span class="kpi-sub">Multi-Terminal Collisions</span>
     </div>
   </div>
 
@@ -42,15 +42,15 @@
       <div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
           <span style="font-size:1.1rem;">🚨</span>
-          <h3 style="margin:0; font-size:1.05rem; color:#fff;">Multi-Terminal BVN Syndicate Attack Simulation</h3>
+          <h3 style="margin:0; font-size:1.05rem; color:#fff;">Duplicate Agent Fraud Ring Simulation</h3>
           <span class="badge fail">Fraud Vector</span>
         </div>
         <p style="margin:0; font-size:.84rem; color:var(--text-secondary); max-width:640px;">
-          Simulate a rogue aggregator deploying 3 physical POS terminals across Lagos, Ibadan, and Abuja registered under the same individual BVN to siphon multiple ₦2.0M float lines.
+          Simulate an agent trying to register 3 POS terminals in Lagos, Ibadan, and Abuja using the same BVN to collect multiple ₦2.0M float lines.
         </p>
       </div>
       <form method="post" action="/app/agents/simulate-fraud-ring" style="margin:0;">
-        <button type="submit" class="danger">⚡ Trigger Multi-Terminal Fraud Ring Alarm</button>
+        <button type="submit" class="danger">⚡ Test Duplicate BVN Detection</button>
       </form>
     </div>
   </div>
@@ -58,8 +58,8 @@
   <!-- Hardware Terminal Card Grid -->
   <div style="margin-bottom:28px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 style="margin:0; font-size:1.2rem;">POS Hardware Fleet &amp; Identity Bindings</h2>
-      <span class="hint">1 BVN : 1 Terminal Float Constraint</span>
+      <h2 style="margin:0; font-size:1.2rem;">POS Hardware Fleet &amp; Agent Bindings</h2>
+      <span class="hint">1 BVN = 1 Active Terminal</span>
     </div>
 
     {{if .Agents}}
