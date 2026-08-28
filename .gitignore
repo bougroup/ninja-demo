@@ -7,4 +7,5 @@ ninja-demo-server
 ninja-demo-server.exe
 web/public/
 web/src/index.ts
+tutor.md
 

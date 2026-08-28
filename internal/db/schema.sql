@@ -103,6 +103,38 @@ CREATE TABLE IF NOT EXISTS webhook_events (
     received_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS users (
+    id                TEXT PRIMARY KEY,
+    first_name        TEXT NOT NULL,
+    last_name         TEXT NOT NULL,
+    email             TEXT UNIQUE NOT NULL,
+    password_hash     TEXT NOT NULL,
+    mobile            TEXT,
+    email_verified    INTEGER NOT NULL DEFAULT 1,
+    kyc_status        TEXT NOT NULL DEFAULT 'unverified',
+        -- unverified -> verified | blocked_underage | blocked_mismatch | blocked_duplicate | blocked_self_excluded
+    id_type           TEXT, -- bvn | nin
+    id_number         TEXT,
+    date_of_birth     TEXT,
+    age               INTEGER NOT NULL DEFAULT 0,
+    kyc_score         REAL NOT NULL DEFAULT 0,
+    identify_raw      TEXT,
+    liveness_status   TEXT NOT NULL DEFAULT 'none',
+    balance_kobo      INTEGER NOT NULL DEFAULT 10000000, -- ₦100,000 promo welcome balance
+    winnings_kobo     INTEGER NOT NULL DEFAULT 0,
+    self_excluded     INTEGER NOT NULL DEFAULT 0,
+    created_at        TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS email_logs (
+    id          TEXT PRIMARY KEY,
+    to_email    TEXT NOT NULL,
+    subject     TEXT NOT NULL,
+    body_html   TEXT NOT NULL,
+    status      TEXT NOT NULL, -- sent_resend | simulated | failed
+    created_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
 -- Gaming & Betting: signup age/identity gate + duplicate-account prevention + live wallet.
 CREATE TABLE IF NOT EXISTS gaming_players (
     id                TEXT PRIMARY KEY,
@@ -122,7 +154,7 @@ CREATE TABLE IF NOT EXISTS gaming_players (
 
 CREATE TABLE IF NOT EXISTS gaming_payouts (
     id           TEXT PRIMARY KEY,
-    player_id    TEXT NOT NULL REFERENCES gaming_players(id),
+    player_id    TEXT NOT NULL,
     amount_kobo  INTEGER NOT NULL,
     identify_raw TEXT,
     status       TEXT NOT NULL DEFAULT 'pending', -- pending -> approved | blocked_mismatch | blocked_underage | blocked_self_excluded
@@ -132,7 +164,7 @@ CREATE TABLE IF NOT EXISTS gaming_payouts (
 
 CREATE TABLE IF NOT EXISTS gaming_bets (
     id           TEXT PRIMARY KEY,
-    player_id    TEXT NOT NULL REFERENCES gaming_players(id),
+    player_id    TEXT NOT NULL,
     match_event  TEXT NOT NULL,
     selection    TEXT NOT NULL,
     odds         REAL NOT NULL,

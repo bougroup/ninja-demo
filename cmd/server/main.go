@@ -47,15 +47,24 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	// Static assets and files
-	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("web/public/assets"))))
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			http.Redirect(w, r, "/app/gaming/signup", http.StatusSeeOther)
-			return
-		}
-		http.FileServer(http.Dir("web/public")).ServeHTTP(w, r)
-	})
+	// Static assets from web/public/assets
+	mux.Handle("GET /assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("web/public/assets"))))
+
+	// Core ApexBet Sportsbook & Registration Routes
+	mux.HandleFunc("GET /{$}", env.SportsbookDashboard)
+	mux.HandleFunc("GET /sportsbook", env.SportsbookDashboard)
+	mux.HandleFunc("GET /register", env.RegisterForm)
+	mux.HandleFunc("POST /register", env.RegisterSubmit)
+	mux.HandleFunc("GET /signup", env.RegisterForm)
+	mux.HandleFunc("POST /signup", env.RegisterSubmit)
+
+	// Live Betting & Payout Compliance Actions
+	mux.HandleFunc("POST /api/kyc/verify", env.VerifyIdentitySubmit)
+	mux.HandleFunc("POST /api/bets/place", env.PlaceBetSubmit)
+	mux.HandleFunc("POST /api/bets/simulate-win", env.SimulateMatchWin)
+	mux.HandleFunc("POST /api/payout/request", env.RequestPayoutCheck)
+	mux.HandleFunc("POST /api/responsible-gaming/self-exclude", env.UserSelfExclude)
+	mux.HandleFunc("POST /api/demo/reset", env.ResetDemoState)
 
 	// Global system controls & Activity Stream
 	mux.HandleFunc("POST /app/toggle-mock-mode", env.ToggleMockMode)
@@ -63,74 +72,18 @@ func main() {
 	mux.HandleFunc("GET /app/api/activity-stream", env.ActivityStreamAPI)
 	mux.HandleFunc("GET /api/activity-stream", env.ActivityStreamAPI)
 
-	// Sandbox fixture reference — every "use this" chip pulls from here.
+	// Sandbox fixture reference
 	mux.HandleFunc("GET /app/sandbox-data", env.SandboxDataPage)
 	mux.HandleFunc("GET /app/guide", env.GuidePage)
 
-	// Vendor-facing app (MarketPay Escrow).
-	mux.HandleFunc("GET /app/vendor/apply", env.VendorApplyForm)
-	mux.HandleFunc("POST /app/vendor/apply", env.VendorApplySubmit)
-	mux.HandleFunc("GET /app/vendor/{id}", env.VendorStatus)
-	mux.HandleFunc("POST /app/vendor/{id}/release-escrow", env.VendorReleaseEscrow)
-	mux.HandleFunc("POST /app/vendor/{id}/simulate-webhook", env.VendorSimulateWebhook)
-	mux.HandleFunc("GET /app/vendor/kyc-complete", env.VendorFlowComplete)
-	mux.HandleFunc("GET /app/vendor/kyb-complete", env.VendorFlowComplete)
-
-	// Compliance ops / admin.
+	// Compliance ops / admin audit tools
 	mux.HandleFunc("GET /app/admin", env.AdminDashboard)
-	mux.HandleFunc("GET /app/admin/vendors/{id}", env.AdminVendorDetail)
-	mux.HandleFunc("GET /app/admin/verifications/{id}/selfie", env.AdminVerificationSelfie)
-	mux.HandleFunc("POST /app/admin/verifications/{id}/resend", env.AdminResendKYC)
-	mux.HandleFunc("POST /app/admin/verifications/{id}/cancel", env.AdminCancelKYC)
-	mux.HandleFunc("GET /app/admin/kyb-verifications/{id}/document/{doc}", env.AdminKYBDocument)
-	mux.HandleFunc("POST /app/admin/kyb-verifications/{id}/resend", env.AdminResendKYB)
-	mux.HandleFunc("POST /app/admin/kyb-verifications/{id}/cancel", env.AdminCancelKYB)
 	mux.HandleFunc("GET /app/admin/webhooks", env.AdminWebhookDeliveries)
 	mux.HandleFunc("POST /app/admin/webhooks/{id}/retry", env.AdminRetryWebhookDelivery)
 	mux.HandleFunc("GET /app/admin/identity-check", env.AdminIdentityCheckForm)
 	mux.HandleFunc("POST /app/admin/identity-check", env.AdminIdentityCheckSubmit)
 
-	// Gaming & Betting (ApexBet).
-	mux.HandleFunc("GET /app/gaming/signup", env.GamingSignupForm)
-	mux.HandleFunc("POST /app/gaming/signup", env.GamingSignupSubmit)
-	mux.HandleFunc("GET /app/gaming", env.GamingDashboard)
-	mux.HandleFunc("POST /app/gaming/players/{id}/payout", env.GamingPayoutCheck)
-	mux.HandleFunc("POST /app/gaming/players/{id}/bet", env.GamingBetSubmit)
-	mux.HandleFunc("POST /app/gaming/players/{id}/self-exclude", env.GamingSelfExclude)
-
-	// Fintechs (ApexPay Neobank).
-	mux.HandleFunc("GET /app/fintech/onboard", env.FintechOnboardForm)
-	mux.HandleFunc("POST /app/fintech/onboard", env.FintechOnboardSubmit)
-	mux.HandleFunc("GET /app/fintech", env.FintechDashboard)
-	mux.HandleFunc("POST /app/fintech/customers/{id}/transfer", env.FintechTransferSubmit)
-	mux.HandleFunc("POST /app/fintech/customers/{id}/re-kyc", env.FintechReKYC)
-
-	// International Companies (ApexGlobal FX Desk).
-	mux.HandleFunc("GET /app/international/console", env.InternationalConsoleForm)
-	mux.HandleFunc("POST /app/international/console", env.InternationalConsoleSubmit)
-
-	// Agent Network KYC (ApexAgent POS).
-	mux.HandleFunc("GET /app/agents/recruit", env.AgentRecruitForm)
-	mux.HandleFunc("POST /app/agents/recruit", env.AgentRecruitSubmit)
-	mux.HandleFunc("GET /app/agents", env.AgentsDashboard)
-	mux.HandleFunc("POST /app/agents/simulate-fraud-ring", env.AgentSimulateFraudRing)
-	mux.HandleFunc("POST /app/agents/{id}/reactivate", env.AgentReactivate)
-	mux.HandleFunc("POST /app/agents/{id}/deactivate", env.AgentDeactivate)
-	mux.HandleFunc("GET /app/agents/aggregators/apply", env.AggregatorApplyForm)
-	mux.HandleFunc("POST /app/agents/aggregators/apply", env.AggregatorApplySubmit)
-	mux.HandleFunc("GET /app/agents/aggregators/kyb-complete", env.AggregatorFlowComplete)
-	mux.HandleFunc("GET /app/agents/aggregators/{id}", env.AggregatorStatus)
-
-	// Employee Verification (WorkForce Payroll).
-	mux.HandleFunc("GET /app/employees/apply", env.EmployeeApplyForm)
-	mux.HandleFunc("POST /app/employees/apply", env.EmployeeApplySubmit)
-	mux.HandleFunc("GET /app/employees/kyc-complete", env.EmployeeFlowComplete)
-	mux.HandleFunc("GET /app/employees", env.EmployeesDashboard)
-	mux.HandleFunc("GET /app/employees/{id}", env.EmployeeDetail)
-	mux.HandleFunc("POST /app/employees/{id}/approve-payroll", env.EmployeeApprovePayroll)
-	mux.HandleFunc("POST /app/employees/{id}/simulate-liveness", env.EmployeeSimulateLiveness)
-
-	// Ninja sandbox calls this — HMAC-verified.
+	// Webhook endpoint from Ninja (HMAC-verified)
 	mux.HandleFunc("POST /webhooks/ninja", env.WebhookReceiver)
 
 	log.Printf("listening on %s (public url: %s)", addr, publicURL)

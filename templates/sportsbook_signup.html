@@ -1,0 +1,152 @@
+{{define "sportsbook_signup.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  {{template "head" .}}
+  <title>ApexBet — Player Signup &amp; 18+ Verification</title>
+  <style>
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      background: radial-gradient(circle at 50% 20%, rgba(239, 68, 68, 0.12), transparent 50%), var(--bg-root);
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05);
+    }
+    .auth-brand {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .auth-brand h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+      margin: 0;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .auth-brand .badge-tag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 540px) {
+      .form-row-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="sportsbook-app" data-flash="{{.Flash}}">
+
+<div class="auth-container">
+  <div class="auth-card">
+
+    <div class="auth-brand">
+      <h1><span style="color:#ef4444;">🎰</span> ApexBet</h1>
+      <span class="badge-tag">NLRC §34 Licensed &middot; Resend Email &middot; Ninja KYC</span>
+      <p style="margin:10px 0 0 0; font-size:.88rem; color:var(--text-secondary);">
+        Create your player account. Instant <strong>₦100,000</strong> welcome betting credit will be added upon registration.
+      </p>
+    </div>
+
+    <!-- Quick Auto-Fill Scenario Presets -->
+    <div class="preset-bar" style="margin-bottom:20px;">
+      <div class="preset-bar-title">⚡ Instant Registration Presets (Click to Fill)</div>
+      <div class="preset-chips">
+        <button type="button" class="preset-chip success" data-fill='{"#first_name":"James","#last_name":"Bond","#email":"james.bond@apexbet.ng","#password":"Pass1234!","#mobile":"08012345678"}'>
+          ✓ James Bond &middot; <span class="mono">james.bond@apexbet.ng</span>
+        </button>
+        <button type="button" class="preset-chip danger" data-fill='{"#first_name":"Tobi","#last_name":"Minor","#email":"tobi.minor@apexbet.ng","#password":"Pass1234!","#mobile":"08099887766"}'>
+          ⛔ Tobi Minor (Age 16) &middot; <span class="mono">tobi.minor@apexbet.ng</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <form id="registerForm" method="post" action="/register">
+      <div class="form-row-2">
+        <div>
+          <label for="first_name">First Name</label>
+          <input id="first_name" name="first_name" value="James" placeholder="e.g. James" required>
+        </div>
+        <div>
+          <label for="last_name">Last Name</label>
+          <input id="last_name" name="last_name" value="Bond" placeholder="e.g. Bond" required>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <label for="email">Email Address <span class="hint" style="color:#38bdf8;">(Receives Welcome Email via Resend)</span></label>
+        <input id="email" name="email" type="email" value="james.bond@apexbet.ng" placeholder="your.name@domain.com" required>
+      </div>
+
+      <div class="form-row-2" style="margin-top:14px;">
+        <div>
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" value="SecretPassword123!" placeholder="••••••••" required>
+        </div>
+        <div>
+          <label for="mobile">Mobile Number (Optional)</label>
+          <input id="mobile" name="mobile" value="08012345678" placeholder="080XXXXXXXX">
+        </div>
+      </div>
+
+      <!-- Welcome Bonus Notice -->
+      <div style="background:rgba(16, 185, 129, 0.08); border:1px solid rgba(16, 185, 129, 0.25); border-radius:var(--radius-sm); padding:12px 14px; margin-top:18px; font-size:.82rem; color:#6ee7b7; display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.1rem;">🎁</span>
+        <div>
+          <strong>₦100,000 Welcome Promo Credit</strong>
+          <div style="font-size:.74rem; color:var(--text-secondary); margin-top:2px;">Will be credited instantly to your wallet. Requires 18+ ID verification before payout.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:22px;">
+        <button type="submit" class="btn primary" style="width:100%; justify-content:center; font-size:.96rem; padding:14px; background:#ef4444; border-color:#dc2626;">
+          Create Account &amp; Enter Sportsbook →
+        </button>
+      </div>
+
+      <div style="text-align:center; margin-top:16px; font-size:.82rem; color:var(--text-tertiary);">
+        Already have an account? <a href="/sportsbook" style="color:#38bdf8; font-weight:600; text-decoration:none;">Go directly to Live Sportsbook</a>
+      </div>
+    </form>
+
+    <!-- Educational Under-the-Hood Panel -->
+    <div style="margin-top:24px; border-top:1px solid var(--border); padding-top:16px;">
+      <div style="font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--text-tertiary); margin-bottom:8px;">
+        🎓 Under The Hood Architecture
+      </div>
+      <div style="font-size:.8rem; color:var(--text-secondary); line-height:1.5;">
+        1. <strong>Resend Dispatch</strong>: Fired via <code>POST https://api.resend.com/emails</code> with branded HTML.<br>
+        2. <strong>Regulatory Onboarding</strong>: Logs user in with <code>unverified</code> status. NLRC §34 requires National ID (BVN/NIN) verification before real-money wagers can be placed.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
+{{end}}

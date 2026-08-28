@@ -63,12 +63,20 @@ html, body {
 
 body {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: 100vh;
+  width: 100%;
   background-image: 
     radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.03) 0%, transparent 60%),
     linear-gradient(180deg, var(--bg-root) 0%, #05080e 100%);
   background-attachment: fixed;
+}
+
+body.sportsbook-app {
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  min-height: 100vh !important;
 }
 
 h1, h2, h3, h4 {

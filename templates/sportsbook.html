@@ -1,0 +1,809 @@
+{{define "sportsbook.html"}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>ApexBet — SportyBet Live Football &amp; Ninja 18+ KYC Gate</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap">
+  <link rel="stylesheet" href="/assets/css/app.css?v=2.0">
+  <script src="/assets/js/app.js?v=2.0" defer></script>
+  <style>
+    /* Complete SportyBet Responsive Design System */
+    :root {
+      --sb-red: #e41b23;
+      --sb-red-hover: #c41219;
+      --sb-green: #00b853;
+      --sb-yellow: #f5a623;
+      --sb-dark-bg: #090e17;
+      --sb-card-bg: #131b2a;
+      --sb-card-hover: #1b263b;
+      --sb-border: rgba(255, 255, 255, 0.08);
+      --sb-text: #ffffff;
+      --sb-text-muted: #8e9cae;
+      --sb-accent-blue: #38bdf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body.sportsbook-app {
+      background-color: var(--sb-dark-bg) !important;
+      color: var(--sb-text) !important;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      display: flex !important;
+      flex-direction: column !important;
+      min-height: 100vh !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
+    /* Top Navigation Header */
+    .sb-header {
+      background: #0d1422;
+      border-bottom: 3px solid var(--sb-red);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .sb-header-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .sb-brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .sb-logo {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.03em;
+    }
+    .sb-logo span.red-badge {
+      background: var(--sb-red);
+      color: #fff;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+
+    .sb-nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sb-nav-tab {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sb-text-muted);
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .sb-nav-tab.active {
+      background: var(--sb-red);
+      color: #fff;
+    }
+    .sb-nav-tab:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    /* Player Account Pill */
+    .sb-account-pill {
+      background: var(--sb-card-bg);
+      border: 1px solid var(--sb-border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .sb-acc-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .sb-acc-label {
+      font-size: 0.68rem;
+      color: var(--sb-text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .sb-acc-val {
+      font-weight: 800;
+      font-size: 0.92rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Main Container & Responsive Layout */
+    .sb-main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 16px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+    @media (max-width: 960px) {
+      .sb-main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Compliance Banner */
+    .sb-compliance-banner {
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .sb-compliance-banner.unverified {
+      background: rgba(245, 166, 35, 0.1);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      color: #f5a623;
+    }
+    .sb-compliance-banner.verified {
+      background: rgba(0, 184, 83, 0.1);
+      border: 1px solid rgba(0, 184, 83, 0.35);
+      color: #00b853;
+    }
+    .sb-compliance-banner.blocked {
+      background: rgba(228, 27, 35, 0.12);
+      border: 1px solid rgba(228, 27, 35, 0.4);
+      color: #f87171;
+    }
+
+    /* Section Header */
+    .sb-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .sb-live-pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--sb-red);
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(228, 27, 35, 0.7); }
+      70% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(228, 27, 35, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(228, 27, 35, 0); }
+    }
+
+    /* Match Card */
+    .sb-match-card {
+      background: var(--sb-card-bg);
+      border: 1px solid var(--sb-border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      transition: border-color 0.15s ease;
+    }
+    .sb-match-card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .sb-match-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--sb-accent-blue);
+      font-weight: 700;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .sb-teams-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sb-teams-names {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .sb-score-badge {
+      background: #0d1422;
+      border: 1px solid var(--sb-border);
+      color: var(--sb-green);
+      font-weight: 900;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 1.05rem;
+    }
+
+    /* Odds Button Grid */
+    .sb-odds-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+      gap: 8px;
+    }
+    .sb-odds-btn {
+      background: #090e17;
+      border: 1px solid var(--sb-border);
+      border-radius: 6px;
+      padding: 8px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .sb-odds-btn .sb-label {
+      font-size: 0.68rem;
+      color: var(--sb-text-muted);
+      font-weight: 600;
+    }
+    .sb-odds-btn .sb-rate {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sb-odds-btn:hover, .sb-odds-btn.active {
+      background: var(--sb-red);
+      border-color: #ff334b;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .sb-odds-btn:hover .sb-label, .sb-odds-btn.active .sb-label {
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Betslip Panel */
+    .sb-betslip {
+      background: var(--sb-card-bg);
+      border: 1px solid var(--sb-border);
+      border-radius: 10px;
+      padding: 18px;
+      position: sticky;
+      top: 80px;
+    }
+    .sb-betslip-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--sb-border);
+      margin-bottom: 14px;
+    }
+    .sb-stake-chips {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 8px 0 14px 0;
+    }
+    .sb-stake-chip {
+      background: #090e17;
+      border: 1px solid var(--sb-border);
+      color: var(--sb-text-muted);
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 6px 4px;
+      text-align: center;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .sb-stake-chip:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    /* Interactive Verification Card */
+    .sb-kyc-card {
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.05), var(--sb-card-bg));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 24px;
+    }
+    .sb-preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 8px;
+      margin: 10px 0 16px 0;
+    }
+    .sb-preset-btn {
+      background: #090e17;
+      border: 1px solid var(--sb-border);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      text-align: left;
+      cursor: pointer;
+      color: var(--sb-text);
+      transition: all 0.15s ease;
+    }
+    .sb-preset-btn:hover {
+      border-color: var(--sb-accent-blue);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    /* Bottom Educational Dock */
+    .sb-dock {
+      background: #080c14;
+      border-top: 1px solid var(--sb-border);
+      padding: 24px 16px;
+      margin-top: 40px;
+      width: 100%;
+    }
+    .sb-dock-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+    .sb-dock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .sb-dock-box {
+      background: var(--sb-card-bg);
+      border: 1px solid var(--sb-border);
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body class="sportsbook-app" data-flash="{{.Flash}}">
+
+<!-- Top Navigation Header -->
+<header class="sb-header">
+  <div class="sb-header-inner">
+    <div class="sb-brand-wrap">
+      <a href="/sportsbook" class="sb-logo">
+        <span class="red-badge">🎰</span> ApexBet
+      </a>
+      <nav class="sb-nav-tabs">
+        <a href="/sportsbook" class="sb-nav-tab active">⚽ Football (Live 3)</a>
+        <a href="/register" class="sb-nav-tab" style="color:var(--sb-accent-blue);">+ New Player</a>
+        <a href="/app/admin" class="sb-nav-tab">🛡️ Admin Logs</a>
+      </nav>
+    </div>
+
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+      <!-- Account Capsule -->
+      <div class="sb-account-pill">
+        <div class="sb-acc-item">
+          <span class="sb-acc-label">Player</span>
+          <strong style="color:#fff; font-size:.85rem;">{{.User.FullName}}</strong>
+        </div>
+        <div class="sb-acc-item">
+          <span class="sb-acc-label">Betting Balance</span>
+          <span class="sb-acc-val" style="color:var(--sb-green);">{{formatKobo .User.BalanceKobo}}</span>
+        </div>
+        {{if gt .User.WinningsKobo 0}}
+        <div class="sb-acc-item">
+          <span class="sb-acc-label">Winnings</span>
+          <span class="sb-acc-val" style="color:var(--sb-accent-blue);">{{formatKobo .User.WinningsKobo}}</span>
+        </div>
+        {{end}}
+      </div>
+
+      <!-- KYC Status Tag -->
+      <div>
+        {{if eq .User.KYCStatus "verified"}}
+          <span class="badge pass">✓ 18+ Verified Adult</span>
+        {{else if eq .User.KYCStatus "blocked_underage"}}
+          <span class="badge fail">⛔ Underage Blocked</span>
+        {{else if eq .User.KYCStatus "blocked_self_excluded"}}
+          <span class="badge fail">⛔ Self-Excluded</span>
+        {{else}}
+          <span class="badge pending">🟡 Unverified (18+ Check Required)</span>
+        {{end}}
+      </div>
+
+      <!-- Demo State Reset -->
+      <form method="post" action="/api/demo/reset" style="margin:0;">
+        <button type="submit" class="btn secondary sm" title="Reset Demo Balance & KYC Status">🔄 Reset Demo</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<!-- Main Sportsbook Body -->
+<main class="sb-main">
+
+  <!-- Left Column: Live Matches & Verification Consoles -->
+  <div>
+
+    <!-- Compliance / 18+ Identity Verification Banner -->
+    {{if eq .User.KYCStatus "unverified"}}
+    <div class="sb-compliance-banner unverified">
+      <div>
+        <strong style="font-size:.95rem; display:block; margin-bottom:2px;">⚠️ Mandatory NLRC §34 18+ Identity Verification Required</strong>
+        <p style="margin:0; font-size:.82rem; color:var(--sb-text-muted);">
+          Under Nigerian gambling regulations, you must verify your identity (BVN/NIN) before placing bets or withdrawing funds.
+        </p>
+      </div>
+      <button type="button" class="btn primary sm" style="background:#f5a623; border-color:#d48b13; color:#000; font-weight:800;" onclick="document.getElementById('kycSection').scrollIntoView({behavior:'smooth'})">
+        ⚡ Verify Identity in 30 Seconds →
+      </button>
+    </div>
+    {{else if eq .User.KYCStatus "verified"}}
+    <div class="sb-compliance-banner verified">
+      <div>
+        <strong style="font-size:.95rem; display:block; margin-bottom:2px;">✓ 18+ NLRC Identity Cleared (Score {{formatScorePercent .User.KYCScore}})</strong>
+        <p style="margin:0; font-size:.82rem; color:var(--sb-text-muted);">
+          Verified against national registry &middot; Full live betting and instant withdrawals unlocked.
+        </p>
+      </div>
+      <span class="badge pass">NLRC Compliant</span>
+    </div>
+    {{else if eq .User.KYCStatus "blocked_underage"}}
+    <div class="sb-compliance-banner blocked">
+      <div>
+        <strong style="font-size:.95rem; display:block; margin-bottom:2px;">⛔ Account Permanently Frozen: Underage Minor Violation (Age {{.User.Age}})</strong>
+        <p style="margin:0; font-size:.82rem; color:var(--sb-text-muted);">
+          Date of Birth in national registry indicates player is under 18 years old. All betting and payouts locked per NLRC Act §34.
+        </p>
+      </div>
+      <span class="badge fail">NLRC §34 Blocked</span>
+    </div>
+    {{end}}
+
+    <!-- Live Matches Grid -->
+    <div class="sb-section-header">
+      <h2 style="font-size:1.15rem; font-weight:800; color:#fff; display:flex; align-items:center;">
+        <span class="sb-live-pulse"></span> Live Football Matches (SportyBet Feed)
+      </h2>
+      <form method="post" action="/api/bets/simulate-win" style="margin:0;">
+        <button type="submit" class="btn primary sm" style="background:var(--sb-green); border-color:#009643;">
+          🏆 Simulate ₦250k Match Win
+        </button>
+      </form>
+    </div>
+
+    <!-- Match 1: Arsenal vs Chelsea -->
+    <div class="sb-match-card">
+      <div class="sb-match-meta">
+        <span>Premier League &middot; 78' Live In-Play</span>
+        <span>ID: ARS-CHE</span>
+      </div>
+      <div class="sb-teams-grid">
+        <div class="sb-teams-names">Arsenal vs Chelsea</div>
+        <div class="sb-score-badge">2 - 1</div>
+      </div>
+      <div class="sb-odds-row">
+        <button type="button" class="sb-odds-btn active" onclick="selectBet('Arsenal 2 - 1 Chelsea (Premier League)', 'Arsenal (Home)', 1.85, this)">
+          <span class="sb-label">1 (Home)</span>
+          <span class="sb-rate">1.85</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Arsenal 2 - 1 Chelsea (Premier League)', 'Draw (X)', 3.40, this)">
+          <span class="sb-label">X (Draw)</span>
+          <span class="sb-rate">3.40</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Arsenal 2 - 1 Chelsea (Premier League)', 'Chelsea (Away)', 4.20, this)">
+          <span class="sb-label">2 (Away)</span>
+          <span class="sb-rate">4.20</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Arsenal 2 - 1 Chelsea (Premier League)', 'Over 2.5 Goals', 1.65, this)">
+          <span class="sb-label">O 2.5</span>
+          <span class="sb-rate">1.65</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Arsenal 2 - 1 Chelsea (Premier League)', 'Under 2.5 Goals', 2.20, this)">
+          <span class="sb-label">U 2.5</span>
+          <span class="sb-rate">2.20</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Match 2: Real Madrid vs Barcelona -->
+    <div class="sb-match-card">
+      <div class="sb-match-meta">
+        <span>La Liga &middot; 64' Live In-Play</span>
+        <span>ID: RMA-BAR</span>
+      </div>
+      <div class="sb-teams-grid">
+        <div class="sb-teams-names">Real Madrid vs Barcelona</div>
+        <div class="sb-score-badge">1 - 1</div>
+      </div>
+      <div class="sb-odds-row">
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Real Madrid 1 - 1 Barcelona (La Liga)', 'Real Madrid (Home)', 2.10, this)">
+          <span class="sb-label">1 (Home)</span>
+          <span class="sb-rate">2.10</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Real Madrid 1 - 1 Barcelona (La Liga)', 'Draw (X)', 3.60, this)">
+          <span class="sb-label">X (Draw)</span>
+          <span class="sb-rate">3.60</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Real Madrid 1 - 1 Barcelona (La Liga)', 'Barcelona (Away)', 3.10, this)">
+          <span class="sb-label">2 (Away)</span>
+          <span class="sb-rate">3.10</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Real Madrid 1 - 1 Barcelona (La Liga)', 'Over 2.5 Goals', 1.72, this)">
+          <span class="sb-label">O 2.5</span>
+          <span class="sb-rate">1.72</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Real Madrid 1 - 1 Barcelona (La Liga)', 'Under 2.5 Goals', 2.05, this)">
+          <span class="sb-label">U 2.5</span>
+          <span class="sb-rate">2.05</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Match 3: Man City vs Liverpool -->
+    <div class="sb-match-card">
+      <div class="sb-match-meta">
+        <span>Premier League &middot; 84' Live In-Play</span>
+        <span>ID: MCI-LIV</span>
+      </div>
+      <div class="sb-teams-grid">
+        <div class="sb-teams-names">Man City vs Liverpool</div>
+        <div class="sb-score-badge">3 - 2</div>
+      </div>
+      <div class="sb-odds-row">
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Man City 3 - 2 Liverpool (Premier League)', 'Man City (Home)', 1.25, this)">
+          <span class="sb-label">1 (Home)</span>
+          <span class="sb-rate">1.25</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Man City 3 - 2 Liverpool (Premier League)', 'Draw (X)', 5.50, this)">
+          <span class="sb-label">X (Draw)</span>
+          <span class="sb-rate">5.50</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Man City 3 - 2 Liverpool (Premier League)', 'Liverpool (Away)', 9.00, this)">
+          <span class="sb-label">2 (Away)</span>
+          <span class="sb-rate">9.00</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Man City 3 - 2 Liverpool (Premier League)', 'Over 5.5 Goals', 2.40, this)">
+          <span class="sb-label">O 5.5</span>
+          <span class="sb-rate">2.40</span>
+        </button>
+        <button type="button" class="sb-odds-btn" onclick="selectBet('Man City 3 - 2 Liverpool (Premier League)', 'Under 5.5 Goals', 1.50, this)">
+          <span class="sb-label">U 5.5</span>
+          <span class="sb-rate">1.50</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Ninja 18+ Identity Verification Console -->
+    <div id="kycSection" class="sb-kyc-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="color:var(--sb-accent-blue); font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">
+            🛡️ Ninja Identity Rail &middot; NLRC §34 Compliance
+          </span>
+          <h3 style="margin:0; font-size:1.15rem; color:#fff;">Instant 18+ Age &amp; National Identity Gate</h3>
+        </div>
+        <span class="badge pass">POST /api/identity/identify</span>
+      </div>
+
+      <!-- Quick Test Scenarios -->
+      <div style="font-size:.78rem; font-weight:700; color:var(--sb-text-muted); margin-bottom:6px;">
+        ⚡ Instant Test Presets (Click to Auto-Fill &amp; Test)
+      </div>
+      <div class="sb-preset-grid">
+        <button type="button" class="sb-preset-btn" onclick="fillKYC('bvn', '77777777777', '1975-01-01')">
+          <strong style="color:var(--sb-green); display:block;">✓ Adult (James Bond, Age 51)</strong>
+          <span class="mono" style="font-size:.72rem; color:var(--sb-text-muted);">BVN: 77777777777</span>
+        </button>
+        <button type="button" class="sb-preset-btn" onclick="fillKYC('bvn', '88888888888', '2010-06-15')">
+          <strong style="color:var(--sb-red); display:block;">⛔ Minor (Tobi Minor, Age 16)</strong>
+          <span class="mono" style="font-size:.72rem; color:var(--sb-text-muted);">BVN: 88888888888</span>
+        </button>
+        <button type="button" class="sb-preset-btn" onclick="fillKYC('bvn', '66666666666', '1982-03-20')">
+          <strong style="color:var(--sb-yellow); display:block;">⚠️ AML Watchlist Hit</strong>
+          <span class="mono" style="font-size:.72rem; color:var(--sb-text-muted);">BVN: 66666666666</span>
+        </button>
+      </div>
+
+      <form method="post" action="/api/kyc/verify">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">
+          <div>
+            <label for="id_type" style="font-size:.8rem; color:var(--sb-text-muted); display:block; margin-bottom:4px;">National ID Rail</label>
+            <select id="id_type" name="id_type" style="width:100%; padding:10px; background:#090e17; border:1px solid var(--sb-border); border-radius:6px; color:#fff;">
+              <option value="bvn">BVN (Bank Verification Number)</option>
+              <option value="nin">NIN (National Identity Number)</option>
+            </select>
+          </div>
+          <div>
+            <label for="id_number" style="font-size:.8rem; color:var(--sb-text-muted); display:block; margin-bottom:4px;">11-Digit ID Number</label>
+            <input id="id_number" name="id_number" value="77777777777" placeholder="77777777777" required style="width:100%; padding:10px; background:#090e17; border:1px solid var(--sb-border); border-radius:6px; color:#fff; font-family:'JetBrains Mono',monospace;">
+          </div>
+          <div>
+            <label for="date_of_birth" style="font-size:.8rem; color:var(--sb-text-muted); display:block; margin-bottom:4px;">Date of Birth <span style="color:var(--sb-red);">(Must be 18+)</span></label>
+            <input id="date_of_birth" name="date_of_birth" type="date" value="1975-01-01" required style="width:100%; padding:10px; background:#090e17; border:1px solid var(--sb-border); border-radius:6px; color:#fff;">
+          </div>
+        </div>
+
+        <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+          <span style="font-size:.78rem; color:var(--sb-text-muted);">
+            Evaluates DOB &ge; 18 and validates name confidence score via Ninja Sandbox API.
+          </span>
+          <button type="submit" class="btn primary" style="background:var(--sb-accent-blue); border-color:#0284c7; color:#000; font-weight:800;">
+            Verify Identity with Ninja API →
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Payout Authorization & Instant Withdrawal Rail -->
+    <div class="sb-match-card" style="margin-top:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="color:var(--sb-green); font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">
+            💰 Payout Protection Rail
+          </span>
+          <h3 style="margin:0; font-size:1.15rem; color:#fff;">Instant Withdrawal &amp; Recipient Bank Match Gate</h3>
+        </div>
+        <span style="font-size:.85rem; color:var(--sb-text-muted);">Available Winnings: <strong style="color:var(--sb-accent-blue);">{{formatKobo .User.WinningsKobo}}</strong></span>
+      </div>
+
+      <p style="font-size:.82rem; color:var(--sb-text-muted); margin-bottom:14px; line-height:1.5;">
+        Before releasing winnings to a bank account, ApexBet calls Ninja server-side to confirm that the receiving commercial bank account name matches the verified player's BVN.
+      </p>
+
+      <form method="post" action="/api/payout/request">
+        <input type="hidden" name="amount" value="250000">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+          <button type="submit" class="btn primary" style="background:var(--sb-green); border-color:#009643; font-weight:800;" {{if or (eq .User.KYCStatus "blocked_underage") (eq .User.KYCStatus "blocked_self_excluded") (lt .User.WinningsKobo 25000000)}}disabled style="opacity:0.4; cursor:not-allowed;"{{end}}>
+            ⚡ Withdraw ₦250,000 to Bank Account
+          </button>
+
+          {{if not .User.SelfExcluded}}
+          <button type="submit" formaction="/api/responsible-gaming/self-exclude" class="btn danger sm" onclick="return confirm('Permanently lock account on National Self-Exclusion Registry?')">
+            ⛔ Self-Exclude Player
+          </button>
+          {{else}}
+          <span class="badge fail">Self-Excluded (Payouts Frozen)</span>
+          {{end}}
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- Right Column: Interactive Betslip -->
+  <div>
+    <div class="sb-betslip">
+      <div class="sb-betslip-header">
+        <strong style="color:#fff; font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+          <span>🎫</span> Live Betslip
+        </strong>
+        <span class="badge pass" id="slipCount">1 Pick</span>
+      </div>
+
+      <form id="betForm" method="post" action="/api/bets/place">
+        <input type="hidden" id="match_event" name="match_event" value="Arsenal 2 - 1 Chelsea (Premier League)">
+        <input type="hidden" id="selection" name="selection" value="Arsenal (Home)">
+        <input type="hidden" id="odds" name="odds" value="1.85">
+
+        <!-- Selected Bet Box -->
+        <div style="background:#090e17; border:1px solid var(--sb-border); border-radius:8px; padding:12px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px;">
+            <strong style="color:#fff; font-size:.88rem;" id="slipSelection">Arsenal (Home)</strong>
+            <strong style="color:var(--sb-accent-blue); font-size:1.05rem; font-family:'JetBrains Mono',monospace;" id="slipOdds">1.85</strong>
+          </div>
+          <div style="font-size:.76rem; color:var(--sb-text-muted);" id="slipMatch">Arsenal 2 - 1 Chelsea</div>
+        </div>
+
+        <!-- Stake Amount -->
+        <div>
+          <label for="stake" style="font-size:.8rem; color:var(--sb-text-muted); display:block; margin-bottom:4px;">Stake Amount (₦)</label>
+          <input id="stake" name="stake" type="number" value="5000" min="100" max="500000" style="width:100%; padding:10px 12px; background:#090e17; border:1px solid var(--sb-border); border-radius:6px; font-size:1.1rem; font-weight:800; color:var(--sb-green); font-family:'JetBrains Mono',monospace;" oninput="updatePotentialWin()">
+          
+          <div class="sb-stake-chips">
+            <span class="sb-stake-chip" onclick="setStake(1000)">+1k</span>
+            <span class="sb-stake-chip" onclick="setStake(5000)">+5k</span>
+            <span class="sb-stake-chip" onclick="setStake(20000)">+20k</span>
+            <span class="sb-stake-chip" onclick="setStake(50000)">+50k</span>
+          </div>
+        </div>
+
+        <!-- Potential Payout Calculation -->
+        <div style="background:rgba(0, 184, 83, 0.08); border:1px solid rgba(0, 184, 83, 0.25); border-radius:6px; padding:10px 14px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:.82rem; color:var(--sb-text-muted);">Potential Return:</span>
+          <strong style="color:var(--sb-green); font-size:1.15rem; font-family:'JetBrains Mono',monospace;" id="potentialWin">₦9,250</strong>
+        </div>
+
+        <button type="submit" class="btn primary" style="width:100%; justify-content:center; padding:14px; font-size:1rem; background:var(--sb-red); border-color:#c41219; font-weight:800;" {{if eq .User.KYCStatus "blocked_underage"}}disabled style="opacity:0.4; cursor:not-allowed;"{{end}}>
+          Place Bet (₦5,000) →
+        </button>
+      </form>
+
+      <div style="margin-top:14px; font-size:.74rem; color:var(--sb-text-muted); line-height:1.4; border-top:1px solid var(--sb-border); padding-top:12px;">
+        ⚖️ <strong>NLRC Act §34 Notice</strong>: Unverified accounts will be prompted for 18+ National ID check before funds are deducted.
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom Educational Dock -->
+<footer class="sb-dock">
+  <div class="sb-dock-inner">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+      <strong style="color:#fff; font-size:.9rem; display:flex; align-items:center; gap:8px;">
+        <span>🎓</span> Ninja Sandbox API &amp; Regulatory Compliance Telemetry
+      </strong>
+      <span class="badge pass">Live Sandbox Connected</span>
+    </div>
+    
+    <div class="sb-dock-grid">
+      <div class="sb-dock-box">
+        <strong style="color:var(--sb-accent-blue); display:block; margin-bottom:4px;">1. Resend Welcome Email</strong>
+        <span style="color:var(--sb-text-muted);">Fires transactional onboarding email with 18+ verification prompt via Resend API.</span>
+      </div>
+      <div class="sb-dock-box">
+        <strong style="color:var(--sb-green); display:block; margin-bottom:4px;">2. POST /api/identity/identify</strong>
+        <span style="color:var(--sb-text-muted);">Validates BVN/NIN in &lt;45ms. Calculates age from DOB to enforce NLRC §34.</span>
+      </div>
+      <div class="sb-dock-box">
+        <strong style="color:var(--sb-yellow); display:block; margin-bottom:4px;">3. Payout Bank Re-Match</strong>
+        <span style="color:var(--sb-text-muted);">Matches destination bank account against player's verified name before disbursing ₦250,000.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function selectBet(match, selection, odds, btn) {
+    document.querySelectorAll('.sb-odds-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    
+    document.getElementById('match_event').value = match;
+    document.getElementById('selection').value = selection;
+    document.getElementById('odds').value = odds;
+    document.getElementById('slipMatch').textContent = match;
+    document.getElementById('slipSelection').textContent = selection;
+    document.getElementById('slipOdds').textContent = parseFloat(odds).toFixed(2);
+    updatePotentialWin();
+  }
+
+  function setStake(amount) {
+    document.getElementById('stake').value = amount;
+    updatePotentialWin();
+  }
+
+  function updatePotentialWin() {
+    var stake = parseFloat(document.getElementById('stake').value) || 0;
+    var odds = parseFloat(document.getElementById('odds').value) || 1.85;
+    var win = Math.round(stake * odds);
+    document.getElementById('potentialWin').textContent = '₦' + win.toLocaleString();
+  }
+
+  function fillKYC(idType, idNumber, dob) {
+    document.getElementById('id_type').value = idType;
+    document.getElementById('id_number').value = idNumber;
+    document.getElementById('date_of_birth').value = dob;
+  }
+</script>
+
+</body>
+</html>
+{{end}}
